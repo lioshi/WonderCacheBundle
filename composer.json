@@ -1,0 +1,27 @@
+{
+    "name": "lioshi/wonder-cache-bundle",
+    "type": "symfony-bundle",
+    "description": "A full response cache with automatic invalidation.",
+    "keywords": ["memcache","memcached","cache","doctrine","response"],
+    "homepage": "https://github.com/lioshi/WonderCacheBundle",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "lioshi",
+            "email": "lioshi@lioshi.com"
+        }
+    ],
+    "require": {
+        "php": ">=5.3.3",
+        "symfony/framework-bundle": ">=2.1",
+        "ext-memcached": ">=2.0"
+
+    },
+    "autoload": {
+        "psr-0": { "Wonder\\CacheBundle": "" }
+    },
+    "config": {
+        "bin-dir": "bin/"
+    },
+    "target-dir": "Wonder/CacheBundle"
+}
