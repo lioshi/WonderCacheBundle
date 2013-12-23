@@ -18,10 +18,10 @@
 
     },
     "autoload": {
-        "psr-0": { "Wonder\\CacheBundle": "" }
+        "psr-0": { "Lioshi\\WonderCacheBundle": "" }
     },
     "config": {
         "bin-dir": "bin/"
     },
-    "target-dir": "Wonder/CacheBundle"
+    "target-dir": "Lioshi/WonderCacheBundle"
 }
