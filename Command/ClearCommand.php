@@ -33,9 +33,7 @@ class ClearCommand extends ContainerAwareCommand
         ->setDefinition(array(
             new InputArgument('client', InputArgument::REQUIRED, 'The client'),
             new InputArgument('prefix', InputArgument::OPTIONAL, 'Delete only cache keys with this prefix'),
-        ))
-        
-        ;
+        ));
    }
 
    /**

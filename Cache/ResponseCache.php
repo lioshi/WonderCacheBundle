@@ -31,18 +31,13 @@ class ResponseCache
         $keyCacheName = 'response_'.md5($event->getRequest()->getUri());
                     
         if ($this->container->get('memcache.'.$this->client)->get($keyCacheName)){
-                        
             $response = $this->container->get('memcache.'.$this->client)->get($keyCacheName);
-            $response->headers->add(array('response_cache' => true ));
+            $response->headers->add(array('response-cache' => true ));
             $event->setResponse($response);
             return; 
-
         } else {
-
             return;
-
         }
-       
     }
 
 
@@ -81,7 +76,7 @@ $modelsEntities = true;
                 ){
 
                 $this->container->get('memcache.'.$this->client)->set($keyCacheName, $response, 0, array(
-                        
+
                             // how get the models and entities id link to this page?
                             // how get via response?
 
