@@ -1,0 +1,16 @@
+services:
+    wc.cache_invalidator:
+        class: Lioshi\WonderCacheBundle\Cache\CacheInvalidator
+        public: false
+        tags:
+            - { name: doctrine.event_listener, event: onFlush }
+        arguments: [ @service_container ]
+
+    wc.response_cache:
+        class: Lioshi\WonderCacheBundle\Cache\ResponseCache
+        arguments: ['@service_container']
+        tags:
+            - { name: kernel.event_listener, event: kernel.request, method: onKernelRequest }
+            - { name: kernel.event_listener, event: kernel.response, method: onKernelResponse }
+
+
