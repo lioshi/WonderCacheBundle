@@ -9,7 +9,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\DependencyInjection\Exception\ServiceNotFoundException;
 
-use Lioshi\WonderCacheBundle\Cache\CacheInvalidator as CacheInvalidator;
+use Lioshi\WonderCacheBundle\Cache\MemcacheTools as MemcacheTools;
 
 /**
  * Provides a command-line interface for flushing memcache content
@@ -48,10 +48,11 @@ class ListCommand extends ContainerAwareCommand
         try {
             $memcache = $this->getContainer()->get('memcache.'.$client);
             
-            $CacheInvalidator = new CacheInvalidator($this->getContainer());
+            $MemcacheTools = new MemcacheTools($this->getContainer());
             $i=0;
             $keys = array();
-            foreach ($CacheInvalidator->getMemcacheKeys() as $key) {
+
+            foreach ($MemcacheTools->getMemcacheKeys($client) as $key) {
               if ($input->getArgument('prefix') && $input->getArgument('prefix')){
                 $prefix = $input->getArgument('prefix');
                 if (substr($key, 0, strlen($prefix)) == $prefix){
@@ -68,6 +69,7 @@ class ListCommand extends ContainerAwareCommand
               }
               
             }
+
             if (!$i){
               $output->writeln('<info>No cache</info>');
             } else {

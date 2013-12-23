@@ -33,6 +33,32 @@ class LioshiWonderCacheExtension extends Extension
             $this->addClients($config['clients'], $container);
             $container->setParameter('wondercache.memcached.clients', $config['clients']);
         }
+
+        if (isset($config['response'])) {
+            $this->enableResponseSupport($config, $container);
+        }
+    }
+
+    /**
+     * Given a handler (memcache/memcached) enables session support
+     *
+     * @param string           $config    Configuration for bundle
+     * @param ContainerBuilder $container Service container
+     *
+     * @return void
+     */
+    private function enableResponseSupport($config, ContainerBuilder $container)
+    {
+        // make sure the client is specified and it exists
+        $client = $config['response']['client'];
+        if (null === $client) {
+            return;
+        }
+        if (!isset($config['clients']) || !isset($config['clients'][$client])) {
+            throw new \LogicException(sprintf('The client "%s" does not exist! Cannot enable the response support!', $client));
+        }
+        
+        $container->setParameter('wondercache.response.client', $client);
     }
 
     /**

@@ -88,6 +88,7 @@ class CacheInvalidator
     private function getMemCached() {
 
         $paramMemcachehosts = $this->container->getParameter('wondercache.memcached.clients');  // get parameters hosts for memcached 
+var_dump($paramMemcachehosts);
         // $servers = array(
         //     array('mem1.domain.com', 11211),
         //     array('mem2.domain.com', 11211)

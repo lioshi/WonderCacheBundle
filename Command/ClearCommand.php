@@ -9,7 +9,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\DependencyInjection\Exception\ServiceNotFoundException;
 
-use Lioshi\WonderCacheBundle\Cache\CacheInvalidator as CacheInvalidator;
+use Lioshi\WonderCacheBundle\Cache\MemcacheTools as MemcacheTools;
 
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Input\ArgvInput;
@@ -56,9 +56,9 @@ class ClearCommand extends ContainerAwareCommand
             // total flush or delete by prefix?
             if ($input->getArgument('prefix') && $input->getArgument('prefix') != ''){
               $prefix = $input->getArgument('prefix');
-              $CacheInvalidator = new CacheInvalidator($this->getContainer());
+              $MemcacheTools = new MemcacheTools($this->getContainer());
               $i=0;
-              foreach ($CacheInvalidator->getMemcacheKeys() as $key) {
+              foreach ($MemcacheTools->getMemcacheKeys($client) as $key) {
                 // $output->writeln('<comment>'.$key.'</comment>');
                 if (substr($key, 0, strlen($prefix)) == $prefix){
                   $i++;
