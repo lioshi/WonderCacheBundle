@@ -134,9 +134,7 @@ class WonderCache
         
         if ($cacheKeyName && !$client){ // object cache
             
-            if ($this->objectClient){
-                $this->container->get('memcache.'.$this->objectClient)->set($cacheKeyName, $content, $ttl, $linkedEntities);
-            }
+            $this->container->get('memcache.'.$this->objectClient)->set($cacheKeyName, $content, $ttl, $linkedEntities);
 
         } elseif (!$cacheKeyName && !$client) { // response cache
 
@@ -157,9 +155,7 @@ class WonderCache
         
         if ($cacheKeyName && !$client){ // object cache
             
-            if ($this->objectClient){
-                $this->container->get('memcache.'.$this->objectClient)->get($cacheKeyName);
-            }
+            $this->container->get('memcache.'.$this->objectClient)->get($cacheKeyName);
 
         } elseif (!$cacheKeyName && !$client) { // response cache
 
