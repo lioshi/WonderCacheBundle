@@ -1,16 +1,25 @@
 services:
-    wc.cache_invalidator:
+    wonder.cache.invalidator:
         class: Lioshi\WonderCacheBundle\Cache\CacheInvalidator
         public: false
         tags:
             - { name: doctrine.event_listener, event: onFlush }
         arguments: [ @service_container ]
 
-    wc.response_cache:
+    wonder.cache:
         class: Lioshi\WonderCacheBundle\Cache\ResponseCache
         arguments: ['@service_container']
         tags:
             - { name: kernel.event_listener, event: kernel.request, method: onKernelRequest }
-            - { name: kernel.event_listener, event: kernel.response, method: onKernelResponse }
+            # - { name: kernel.event_listener, event: kernel.response, method: onKernelResponse }
+            - { name: kernel.event_listener, event: kernel.terminate, method: onKernelResponse }
 
 
+kernel.view KernelEvents::VIEW  GetResponseForControllerResultEvent
+
+
+
+    response:
+        class:        Symfony\Component\HttpFoundation\Response
+    request:
+        class:        Symfony\Component\HttpFoundation\Request
