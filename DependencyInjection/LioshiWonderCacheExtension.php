@@ -37,16 +37,12 @@ class LioshiWonderCacheExtension extends Extension
         if (isset($config['response'])) {
             $this->enableResponseSupport($config, $container);
         }
+
+        if (isset($config['object'])) {
+            $this->enableObjectSupport($config, $container);
+        }
     }
 
-    /**
-     * Given a handler (memcache/memcached) enables session support
-     *
-     * @param string           $config    Configuration for bundle
-     * @param ContainerBuilder $container Service container
-     *
-     * @return void
-     */
     private function enableResponseSupport($config, ContainerBuilder $container)
     {
         // make sure the client is specified and it exists
@@ -59,6 +55,20 @@ class LioshiWonderCacheExtension extends Extension
         }
         
         $container->setParameter('wondercache.response.client', $client);
+    }
+
+    private function enableObjectSupport($config, ContainerBuilder $container)
+    {
+        // make sure the client is specified and it exists
+        $client = $config['object']['client'];
+        if (null === $client) {
+            return;
+        }
+        if (!isset($config['clients']) || !isset($config['clients'][$client])) {
+            throw new \LogicException(sprintf('The client "%s" does not exist! Cannot enable the object support!', $client));
+        }
+        
+        $container->setParameter('wondercache.object.client', $client);
     }
 
     /**
