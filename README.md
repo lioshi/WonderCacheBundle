@@ -39,8 +39,8 @@ lioshi_wonder_cache:
 
 
 ##Usage
-### manual cache support
-if ($this->container->get('memcache.default')->get($keyCacheName)){
+### manual cache support TODO
+if ($this->container->get('wonder.cache')->get($keyCacheName)){
     
     return $this->container->get('wonder.cache')->get($keyCacheName);
 
@@ -62,7 +62,7 @@ if ($this->container->get('memcache.default')->get($keyCacheName)){
     return $return;
 }
 
-### object cache support 
+### object cache support TODO
 Need configuration object.client
 
         $this->container->get('wonder.cache')->set(
@@ -74,11 +74,14 @@ Need configuration object.client
             $cacheKeyName
         );
 
-### response cache support (all page)
+
+
+
+
+### response cache support (all page) DONE
 Need configuration response.client
 
-        $this->container->get('wonder.cache')->set(
-            $content, 
+        $this->container->get('wonder.cache')->addLinkedEntities(
             array(
                 'Testa\ArticleBundle\Entity\Pack' => array(1,65,988), 
                 'Testa\ArticleBundle\Entity\Export' => array(65,22)
