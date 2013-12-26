@@ -17,10 +17,14 @@ use Symfony\Component\DependencyInjection\Exception\ServiceNotFoundException;
 class WonderCache
 {
     private $container;
+    private $linkedEntities;
+
+
 
     public function __construct(ContainerInterface $container)
     {
         $this->container = $container;
+        $this->linkedEntities = array();
         $this->responseClient = false;
         $this->objectClient = false;
         if ($container->hasParameter('wondercache.response.client')){
@@ -31,6 +35,9 @@ class WonderCache
         }
     }
 
+
+
+
     public function onKernelRequest(GetResponseEvent $event)
     {
 
@@ -40,7 +47,7 @@ class WonderCache
                     
         if ($this->container->get('memcache.'.$this->responseClient)->get($cacheKeyName)){
             $response = $this->container->get('memcache.'.$this->responseClient)->get($cacheKeyName);
-            $response->headers->add(array('response-cache' => true ));
+            $response->headers->add(array('wc-response-cache' => true ));
             $event->setResponse($response);
             return; 
         } else {
@@ -57,11 +64,7 @@ class WonderCache
         $cacheKeyName = $this->getResponseCacheKeyName($event->getRequest()->getUri());
             
         if ($this->container->get('memcache.'.$this->responseClient)->get($cacheKeyName)){
-                
-            // purge session of linkedEntities allreadymanaged
-            $this->container->get('session')->set('linked-entities', '');                
             return;
-
         } else {
 
             $response = $event->getResponse();
@@ -77,21 +80,17 @@ class WonderCache
 // var_dump($response->headers->keys());
 
 
-            $linkedEntities = $this->container->get('session')->get('linked-entities', false);
-
-
-
+            $linkedEntities = $this->getLinkedEntities();
 // if ($linkedEntities){ 
 // $fp = fopen("/data/www/testa/web/logInvalidatorCache.txt","w"); 
 // $cachelogs  = '0: '.$cacheKeyName;
-// $cachelogs .= '1: '.print_r($response->headers->keys(), true);
-// $cachelogs .= '2: '.print_r($event->getResponse()->headers->keys(), true);
-// $cachelogs .= 'content-type: '.$event->getResponse()->headers->get('content-type');
+// $cachelogs .= '1: '.print_r($linkedEntities, true);
+// $cachelogs .= '2: '.print_r($response->headers->keys(), true);
+// $cachelogs .= 'content-type: '.$response->headers->get('content-type');
 // $cachelogs .= '------------';
 // $cachelogs .= "\n";
 // fputs($fp, $cachelogs); 
 // }
-
             $validContentType = false;
             foreach ($contentTypesAllowedInCache as $contentTypeAllowedInCache) {
                 if(strpos($response->headers->get('content-type'), $contentTypeAllowedInCache)!== false){
@@ -101,11 +100,11 @@ class WonderCache
             }
             if ($validContentType && $linkedEntities ){
 
-                $this->container->get('memcache.'.$this->responseClient)->set($cacheKeyName, $response, 0, $linkedEntities);
+                $this->container->get('memcache.'.$this->responseClient)->set($cacheKeyName, $response, 0);
+                // manage $linkedEntities
+                $this->addLinkedEntitiesToCachedKeys($cacheKeyName, $linkedEntities, $this->responseClient);
             }
 
-            // purge session of linkedEntities allreadymanaged
-            $this->container->get('session')->set('linked-entities', '');
             return $response;
 
         }
@@ -115,36 +114,38 @@ class WonderCache
 
     public function getResponseCacheKeyName($uri)
     {
-        return '1_cache_response_'.$uri;
+        return 'wc_response_cache_'.$uri;
         // return 'response_'.md5($uri);
     }
 
     public function addLinkedEntities($entities){
         
-        // TODO: merge new entites with existant
-
-
-        $this->container->get('session')->set('linked-entities', $entities);
-
+        // merge new entites with existant
+        $this->linkedEntities = array_merge($this->linkedEntities, $entities);
     }
 
-
+    public function getLinkedEntities(){
+        return $this->linkedEntities;
+    }
 
     public function set($content, $linkedEntities, $cacheKeyName = false, $client = false,  $ttl = 0){
         
         if ($cacheKeyName && !$client){ // object cache
             
-            $this->container->get('memcache.'.$this->objectClient)->set($cacheKeyName, $content, $ttl, $linkedEntities);
+            $this->container->get('memcache.'.$this->objectClient)->set($cacheKeyName, $content, $ttl);
+            //  manage  $linkedEntities 
 
-        } elseif (!$cacheKeyName && !$client) { // response cache
 
-            // put linkedEntities in session
-            $this->addLinkedEntities($entities);
+        } elseif (!$content && !$cacheKeyName && !$client) { // response cache
+
+            // save linkedEntities
+            $this->addLinkedEntities($linkedEntities);
             // and cache is set with $this->onKernelResponse launch by event kernel.terminate
 
         } elseif ($cacheKeyName && $client) { // manual cache
 
-            $this->container->get('memcache.'.$client)->set($cacheKeyName, $content, $ttl, $linkedEntities);
+            $this->container->get('memcache.'.$client)->set($cacheKeyName, $content, $ttl);
+            // manage $linkedEntities
 
         }
         
@@ -170,5 +171,37 @@ class WonderCache
 
     }
 
+    public function getLinkedEntitiesToCachedKeysFilename() {
+        return 'wc_linked_entities';
+    }
+
+    public function addLinkedEntitiesToCachedKeys($key, $entities, $client){
+
+    // if(in_array($this->get('kernel')->getEnvironment(), array('prod'))) {
+                
+        if (is_array($entities) && count($entities) && $client){
+        
+            $linkedEntitiesToCachedKeysFile = $this->getLinkedEntitiesToCachedKeysFilename();    
+
+            // array of models with key value
+            // $entities = array_flip($entities);
+            foreach ($entities as $linkedModel => $entitiesIds) {
+                $entities[$linkedModel] = array();
+                $entities[$linkedModel][$key] = $entitiesIds;
+            }
+
+            if ($this->container->get('memcache.'.$client)->get($linkedEntitiesToCachedKeysFile)){
+
+                $linkedEntitiesToCachedKeysFileContent = $this->container->get('memcache.'.$client)->get($linkedEntitiesToCachedKeysFile);
+
+                $entities = array_merge_recursive($linkedEntitiesToCachedKeysFileContent,$entities);
+            } 
+            
+            $this->container->get('memcache.'.$client)->set($linkedEntitiesToCachedKeysFile, $entities,0); 
+
+            
+        }
+    // }
+    }
 
 }

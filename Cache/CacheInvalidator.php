@@ -39,7 +39,7 @@ class CacheInvalidator
                 if (method_exists($entity, 'getId')){
                     $idsFlush[] = $entity->getId();
                 } 
-                if (is_array($classesToDelete[get_class($entity)])){
+                if (array_key_exists(get_class($entity), $classesToDelete)){
                     $a = $classesToDelete[get_class($entity)];
                 } else {
                     $a = array();
@@ -48,10 +48,10 @@ class CacheInvalidator
             }
         }
 
-        $loggingMemcache = new LoggingMemcache;
+        $WonderCache = new WonderCache($this->container);
         $memcached = $this->getMemCached();
 
-        $LinkedModelsToCachedKeys = $memcached->get($loggingMemcache->getLinkedModelsToCachedKeysName());
+        $LinkedModelsToCachedKeys = $memcached->get($WonderCache->getLinkedEntitiesToCachedKeysFilename());
         // $LinkedModelsToCachedKeys = '__linkedModelsToCachedKeys';
         $cachelogs = count($LinkedModelsToCachedKeys)."\n";
 
@@ -85,10 +85,11 @@ class CacheInvalidator
         return $this->getMemCached()->getAllKeys();
     } 
 
+    // get memcached for all servers used
     private function getMemCached() {
 
         $paramMemcachehosts = $this->container->getParameter('wondercache.memcached.clients');  // get parameters hosts for memcached 
-var_dump($paramMemcachehosts);
+// var_dump($paramMemcachehosts);
         // $servers = array(
         //     array('mem1.domain.com', 11211),
         //     array('mem2.domain.com', 11211)

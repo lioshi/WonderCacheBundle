@@ -4,7 +4,7 @@ namespace Lioshi\WonderCacheBundle\Cache;
 /**
  * Class to encapsulate PHP Memcached object to avoid the "Dog Pile" effect
  */
-class AntiDogPileMemcache extends LoggingMemcache
+class AntiDogPileMemcache extends \Memcached //LoggingMemcache
 {
     const MAX_TTL = 2592000;
 

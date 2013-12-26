@@ -33,7 +33,7 @@ if ($extension->getVersion()<2) {
             }
         }
 
-        public function getLinkedModelsToCachedKeysName() {
+        public function getLinkedEntitiesToCachedKeysName() {
             return 'wc_linkedEntities';
         }
 
