@@ -49,7 +49,8 @@ class CacheInvalidator
         }
 
         $WonderCache = new WonderCache($this->container);
-        $memcached = $this->getMemCached();
+        $MemcacheTools = new MemcacheTools($this->container);
+        $memcached = $MemcacheTools->getMemCachedAllServers(); 
 
         $LinkedModelsToCachedKeys = $memcached->get($WonderCache->getLinkedEntitiesToCachedKeysFilename());
         // $LinkedModelsToCachedKeys = '__linkedModelsToCachedKeys';
@@ -66,6 +67,9 @@ class CacheInvalidator
                     if (count(array_intersect($entitiesIds, $idsFlush))){
                         $memcached->delete($key);
                         $cachelogs .= 'Key deleted                      : '.$key."\n";
+                        // deleted entrie in 
+                        unset($LinkedModelsToCachedKeys[$classToDelete][$key]);
+                        $memcached->set($WonderCache->getLinkedEntitiesToCachedKeysFilename(), $LinkedModelsToCachedKeys, 0);
                     }
                 }
             }
@@ -76,35 +80,35 @@ class CacheInvalidator
 
     }
 
-    /**
-     * get all keys from memecahced servers hosts in parameters
-     * @return [type] [description]
-     */
-    public function getMemcacheKeys() {
+//     /**
+//      * get all keys from memecahced servers hosts in parameters
+//      * @return [type] [description]
+//      */
+//     public function getMemcacheKeys() {
 
-        return $this->getMemCached()->getAllKeys();
-    } 
+//         return $this->getMemCached()->getAllKeys();
+//     } 
 
-    // get memcached for all servers used
-    private function getMemCached() {
+//     // get memcached for all servers used
+//     private function getMemCached() {
 
-        $paramMemcachehosts = $this->container->getParameter('wondercache.memcached.clients');  // get parameters hosts for memcached 
-// var_dump($paramMemcachehosts);
-        // $servers = array(
-        //     array('mem1.domain.com', 11211),
-        //     array('mem2.domain.com', 11211)
-        // );
-        foreach ($paramMemcachehosts as $paramMemcachehost) {
-            foreach ($paramMemcachehost['hosts'] as $host) {
-                $servers[] = array($host['dsn'],$host['port']);
-            }
-        }
+//         $paramMemcachehosts = $this->container->getParameter('wondercache.memcached.clients');  // get parameters hosts for memcached 
+// // var_dump($paramMemcachehosts);
+//         // $servers = array(
+//         //     array('mem1.domain.com', 11211),
+//         //     array('mem2.domain.com', 11211)
+//         // );
+//         foreach ($paramMemcachehosts as $paramMemcachehost) {
+//             foreach ($paramMemcachehost['hosts'] as $host) {
+//                 $servers[] = array($host['dsn'],$host['port']);
+//             }
+//         }
 
-        $memcache = new \Memcached;
-        $memcache->addServers($servers); // connect to those servers
+//         $memcache = new \Memcached;
+//         $memcache->addServers($servers); // connect to those servers
 
-        return $memcache;
-    }
+//         return $memcache;
+//     }
 
  
     

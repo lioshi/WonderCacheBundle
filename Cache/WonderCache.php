@@ -47,7 +47,12 @@ class WonderCache
                     
         if ($this->container->get('memcache.'.$this->responseClient)->get($cacheKeyName)){
             $response = $this->container->get('memcache.'.$this->responseClient)->get($cacheKeyName);
+            
+            // info of response cache used
             $response->headers->add(array('wc-response-cache' => true ));
+            // info of entities linked to response cache
+            // TODO
+            
             $event->setResponse($response);
             return; 
         } else {
@@ -128,48 +133,48 @@ class WonderCache
         return $this->linkedEntities;
     }
 
-    public function set($content, $linkedEntities, $cacheKeyName = false, $client = false,  $ttl = 0){
+    // public function set($content, $linkedEntities, $cacheKeyName = false, $client = false,  $ttl = 0){
         
-        if ($cacheKeyName && !$client){ // object cache
+    //     if ($cacheKeyName && !$client){ // object cache
             
-            $this->container->get('memcache.'.$this->objectClient)->set($cacheKeyName, $content, $ttl);
-            //  manage  $linkedEntities 
+    //         $this->container->get('memcache.'.$this->objectClient)->set($cacheKeyName, $content, $ttl);
+    //         //  manage  $linkedEntities 
 
 
-        } elseif (!$content && !$cacheKeyName && !$client) { // response cache
+    //     } elseif (!$content && !$cacheKeyName && !$client) { // response cache
 
-            // save linkedEntities
-            $this->addLinkedEntities($linkedEntities);
-            // and cache is set with $this->onKernelResponse launch by event kernel.terminate
+    //         // save linkedEntities
+    //         $this->addLinkedEntities($linkedEntities);
+    //         // and cache is set with $this->onKernelResponse launch by event kernel.terminate
 
-        } elseif ($cacheKeyName && $client) { // manual cache
+    //     } elseif ($cacheKeyName && $client) { // manual cache
 
-            $this->container->get('memcache.'.$client)->set($cacheKeyName, $content, $ttl);
-            // manage $linkedEntities
+    //         $this->container->get('memcache.'.$client)->set($cacheKeyName, $content, $ttl);
+    //         // manage $linkedEntities
 
-        }
+    //     }
         
 
-    }
+    // }
 
-    public function get($cacheKeyName, $client = false){
+    // public function get($cacheKeyName, $client = false){
         
-        if ($cacheKeyName && !$client){ // object cache
+    //     if ($cacheKeyName && !$client){ // object cache
             
-            $this->container->get('memcache.'.$this->objectClient)->get($cacheKeyName);
+    //         $this->container->get('memcache.'.$this->objectClient)->get($cacheKeyName);
 
-        } elseif (!$cacheKeyName && !$client) { // response cache
+    //     } elseif (!$cacheKeyName && !$client) { // response cache
 
-            // no get for this cache, event kernel.terminate manage this
+    //         // no get for this cache, event kernel.terminate manage this
 
-        } elseif ($cacheKeyName && $client) { // manual cache
+    //     } elseif ($cacheKeyName && $client) { // manual cache
 
-            $this->container->get('memcache.'.$client)->get($cacheKeyName);
+    //         $this->container->get('memcache.'.$client)->get($cacheKeyName);
 
-        }
+    //     }
 
 
-    }
+    // }
 
     public function getLinkedEntitiesToCachedKeysFilename() {
         return 'wc_linked_entities';
