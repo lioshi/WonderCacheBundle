@@ -1,3 +1,7 @@
+parameters:
+    wondercache.data_collector.template: "LioshiWonderCacheBundle:Collector:wondercache"
+
+
 services:
     wonder.cache.invalidator:
         class: Lioshi\WonderCacheBundle\Cache\CacheInvalidator
@@ -20,4 +24,4 @@ services:
         class: Lioshi\WonderCacheBundle\DataCollector\WonderCacheDataCollector
         arguments: [@wonder.cache.logger]
         tags: 
-            - { name: data_collector, template: "WonderCacheBundle:Collector:wondercache", id: "wondercache" }
+            - { name: data_collector, template: %wondercache.data_collector.template%, id: "wondercache" }
