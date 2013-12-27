@@ -28,8 +28,8 @@ class ListCommand extends ContainerAwareCommand
         ->setName('wondercache:list')
         ->setDescription('List all Memcache items')
         ->setDefinition(array(
-            new InputArgument('client', InputArgument::REQUIRED, 'The client'),
-            new InputArgument('prefix', InputArgument::OPTIONAL, 'List only cache keys with this prefix'),
+            // new InputArgument('client', InputArgument::REQUIRED, 'The client'),
+            // new InputArgument('prefix', InputArgument::OPTIONAL, 'List only cache keys with this prefix'),
         ))
         ;
    }
@@ -44,29 +44,30 @@ class ListCommand extends ContainerAwareCommand
     */
    protected function execute(InputInterface $input, OutputInterface $output)
    {
-        $client = $input->getArgument('client');
+        // $client = $input->getArgument('client');
+        $client = 'response';
         try {
-            $memcache = $this->getContainer()->get('memcache.'.$client);
+            $memcache = $this->getContainer()->get('memcached.'.$client);
             
             $MemcacheTools = new MemcacheTools($this->getContainer());
             $i=0;
             $keys = array();
 
             foreach ($MemcacheTools->getMemcacheKeys($client) as $key) {
-              if ($input->getArgument('prefix') && $input->getArgument('prefix')){
-                $prefix = $input->getArgument('prefix');
-                if (substr($key, 0, strlen($prefix)) == $prefix){
-                  $i++;
-                  $state = ($memcache->get($key))?'':'<error> empty </error>';
-                  $output->writeln('<info>'.$i.'</info> <comment>'.$key.'</comment> '.$state);
-                  $keys[$i] = $key;
-                }
-              } else {
+              // if ($input->getArgument('prefix') && $input->getArgument('prefix')){
+              //   $prefix = $input->getArgument('prefix');
+              //   if (substr($key, 0, strlen($prefix)) == $prefix){
+              //     $i++;
+              //     $state = ($memcache->get($key))?'':'<error> empty </error>';
+              //     $output->writeln('<info>'.$i.'</info> <comment>'.$key.'</comment> '.$state);
+              //     $keys[$i] = $key;
+              //   }
+              // } else {
                 $i++;
                 $state = ($memcache->get($key))?'':'<error> empty </error>';
                 $output->writeln('<info>'.$i.'</info> <comment>'.$key.'</comment> '.$state);
                 $keys[$i] = $key;
-              }
+              // }
               
             }
 
@@ -93,41 +94,41 @@ class ListCommand extends ContainerAwareCommand
     */
     protected function interact(InputInterface $input, OutputInterface $output)
     {
-        if (!$input->getArgument('client')) {
-            $client = $this->getHelper('dialog')->askAndValidate(
-                $output,
-                '<info> Please give the client (default): </info>',
-                function($client)
-                {
-                   if (empty($client)) {
-                      $client = 'default';
-                      // throw new \Exception('client can not be empty');
-                   }
+        // if (!$input->getArgument('client')) {
+        //     $client = $this->getHelper('dialog')->askAndValidate(
+        //         $output,
+        //         '<info> Please give the client (response): </info>',
+        //         function($client)
+        //         {
+        //            if (empty($client)) {
+        //               $client = 'response';
+        //               // throw new \Exception('client can not be empty');
+        //            }
 
-                   return $client;
-                }
-            );
-            $input->setArgument('client', $client);
-        }
+        //            return $client;
+        //         }
+        //     );
+        //     $input->setArgument('client', $client);
+        // }
 
-        if (!$input->getArgument('prefix')) {
-            $prefix = $this->getHelper('dialog')->askAndValidate(
-                $output,
-                '<question>Please give the prefix and enter, or enter directly:</question>',
-                function($prefix)
-                {
-                   return $prefix;
-                }
-            );
-            $input->setArgument('prefix', $prefix);
-        }
+        // if (!$input->getArgument('prefix')) {
+        //     $prefix = $this->getHelper('dialog')->askAndValidate(
+        //         $output,
+        //         '<question> Please give the prefix and enter, or enter directly: </question>',
+        //         function($prefix)
+        //         {
+        //            return $prefix;
+        //         }
+        //     );
+        //     $input->setArgument('prefix', $prefix);
+        // }
     }
 
     protected function getCacheContent($keys, $memcache, $output){
       
       $key = $this->getHelper('dialog')->askAndValidate(
           $output,
-          '<question>Display which cache key content (write number) or enter:</question>',
+          '<info>Display which cache key content? (put number) </info>',
           function($key)
           {
             return $key;

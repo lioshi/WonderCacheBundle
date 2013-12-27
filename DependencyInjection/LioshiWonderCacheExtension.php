@@ -31,42 +31,16 @@ class LioshiWonderCacheExtension extends Extension
 
         if (isset($config['activated'])) {
             $container->setParameter('wondercache.activated', $config['activated']);
+        } else {
+            $container->setParameter('wondercache.activated', false);
         }
 
         if (isset($config['memcached_response'])) {
             $this->newMemcachedClient('response', $config['memcached_response'], $container);
-            // $container->setParameter('wondercache.memcached.clients', $config['clients']);
+            $container->setParameter('wondercache.memcached.response', $config['memcached_response']);
         }
 
 
-    }
-
-    private function enableResponseSupport($config, ContainerBuilder $container)
-    {
-        // make sure the client is specified and it exists
-        $client = $config['response']['client'];
-        if (null === $client) {
-            return;
-        }
-        if (!isset($config['clients']) || !isset($config['clients'][$client])) {
-            throw new \LogicException(sprintf('The client "%s" does not exist! Cannot enable the response support!', $client));
-        }
-        
-        $container->setParameter('wondercache.response.client', $client);
-    }
-
-    private function enableObjectSupport($config, ContainerBuilder $container)
-    {
-        // make sure the client is specified and it exists
-        $client = $config['object']['client'];
-        if (null === $client) {
-            return;
-        }
-        if (!isset($config['clients']) || !isset($config['clients'][$client])) {
-            throw new \LogicException(sprintf('The client "%s" does not exist! Cannot enable the object support!', $client));
-        }
-        
-        $container->setParameter('wondercache.object.client', $client);
     }
 
     /**
@@ -142,7 +116,7 @@ class LioshiWonderCacheExtension extends Extension
         }
 
         // Add the service to the container
-        $serviceName = sprintf('memcache.%s', $name);
+        $serviceName = sprintf('memcached.%s', $name);
         $container->setDefinition($serviceName, $memcached);
 
     }

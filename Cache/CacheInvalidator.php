@@ -80,36 +80,5 @@ class CacheInvalidator
 
     }
 
-//     /**
-//      * get all keys from memecahced servers hosts in parameters
-//      * @return [type] [description]
-//      */
-//     public function getMemcacheKeys() {
-
-//         return $this->getMemCached()->getAllKeys();
-//     } 
-
-//     // get memcached for all servers used
-//     private function getMemCached() {
-
-//         $paramMemcachehosts = $this->container->getParameter('wondercache.memcached.clients');  // get parameters hosts for memcached 
-// // var_dump($paramMemcachehosts);
-//         // $servers = array(
-//         //     array('mem1.domain.com', 11211),
-//         //     array('mem2.domain.com', 11211)
-//         // );
-//         foreach ($paramMemcachehosts as $paramMemcachehost) {
-//             foreach ($paramMemcachehost['hosts'] as $host) {
-//                 $servers[] = array($host['dsn'],$host['port']);
-//             }
-//         }
-
-//         $memcache = new \Memcached;
-//         $memcache->addServers($servers); // connect to those servers
-
-//         return $memcache;
-//     }
-
- 
     
 }

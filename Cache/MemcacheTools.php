@@ -18,9 +18,9 @@ class MemcacheTools
      * get all keys from memecahced servers hosts in parameters
      * @return [type] [description]
      */
-    public function getMemcacheKeys($client = false) {
+    public function getMemcacheKeys($client) {
 
-        return $this->getMemCachedAllServers($client)->getAllKeys();
+        return $this->getMemCachedByClient($client)->getAllKeys();
     } 
 
     /**
@@ -28,21 +28,14 @@ class MemcacheTools
      * @param  string $client  if not specified then all client
      * @return [type]          [description]
      */
-    public function getMemCachedAllServers($client = false) {
-
-        $paramMemcachehosts = $this->container->getParameter('wondercache.memcached.clients');  // get parameters hosts for memcached 
+    public function getMemCachedByClient($client) {
 
         if ($client){
-            foreach ($paramMemcachehosts[$client]['hosts'] as $host) {
+            $paramMemcachehosts = $this->container->getParameter('wondercache.memcached.'.$client);  // get parameters hosts for memcached 
+            foreach ($paramMemcachehosts['hosts'] as $host) {
                 $servers[] = array($host['dsn'],$host['port']);
             }
-        } else {
-            foreach ($paramMemcachehosts as $client){
-                foreach ($client['hosts'] as $host) {
-                    $servers[] = array($host['dsn'],$host['port']);
-                }
-            }
-        }
+        } 
 
         $memcache = new \Memcached;
         $memcache->addServers($servers); // connect to those servers
