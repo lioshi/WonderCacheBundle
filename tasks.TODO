@@ -1,4 +1,6 @@
 
+ ☐ put only one client in config, but many host/port/weight
+
  ☐ add webDebug toolbar entrie : display if page is in cache and wich entities are linked : exemple : http://www.mon-code.net/article/61/un-exemple-pour-enrichir-la-debug-toolbar-et-le-profiler-de-symfony2-a-laide-du-datacollector
  ☐ response cache ok
  ☐ object cache?

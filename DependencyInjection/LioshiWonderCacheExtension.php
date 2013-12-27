@@ -145,6 +145,9 @@ class LioshiWonderCacheExtension extends Extension
                         $constant = 'Memcached::OPT_'.strtoupper($key);
                         $memcached->addMethodCall('setOption', array(constant($constant), $newValue));
                         $options[$key] = $newValue;
+                        // add prefix in container param
+                        if ($key == 'prefix_key')
+                            $container->setParameter('wondercache.memcached.'.$name.'.prefix', $config['options'][$key]);
                     }
 
                 }

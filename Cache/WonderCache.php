@@ -33,6 +33,11 @@ class WonderCache
         if ($container->hasParameter('wondercache.object.client')){
             $this->objectClient = $container->getParameter('wondercache.object.client');
         }
+        if ($container->hasParameter('wondercache.memcached.response.prefix')){
+            $this->objectClient = $container->getParameter('wondercache.object.client');
+        }
+
+
     }
 
 
