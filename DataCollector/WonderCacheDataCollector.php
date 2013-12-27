@@ -26,7 +26,7 @@ class WonderCacheDataCollector extends DataCollector
  
     public function getName()
     {
-        return 'WonderCache logs';
+        return 'wondercache';
     }
  
     public function getNbrLogs()
