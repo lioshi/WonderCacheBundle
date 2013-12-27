@@ -121,10 +121,10 @@ The ```wondercache:clear``` command deletes all memcached's items and ```wonderc
 ## Usage
 Into a controller you can run() wonderCache and specified optionnaly entities which arer linked to the controller response.
 The following exemple means that the controller's response depends on (or is linked to):
+- 3 packs
+- 2 exports
+- all cars
 
--3 packs
--2 exports
--all cars
 
         $this->container->get('wonder.cache')
             ->run()
