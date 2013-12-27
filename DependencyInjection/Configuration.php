@@ -22,6 +22,12 @@ class Configuration implements ConfigurationInterface
         $treeBuilder = new TreeBuilder();
         $rootNode = $treeBuilder->root('lioshi_wonder_cache');
         $rootNode
+            ->children()
+                ->scalarNode('activated')
+                    ->defaultValue(true)
+                    ->info('Specify to enable WonderCache.')
+                ->end()
+            ->end()
             ->append($this->addMemcachedSection())
         ;
 
@@ -38,8 +44,7 @@ class Configuration implements ConfigurationInterface
         $node = $tree->root('memcached_response');
 
         $node
-            ->prototype('array')
-                ->children()
+                 ->children()
                     ->scalarNode('persistent_id')
                         ->defaultNull()
                         ->info('Specify to enable persistent connections. All clients with the same ID share connections.')
@@ -69,7 +74,6 @@ class Configuration implements ConfigurationInterface
                     ->end()
                     ->append($this->addMemcachedOptionsSection())
                 ->end()
-            ->end()
         ->end();
 
         return $node;

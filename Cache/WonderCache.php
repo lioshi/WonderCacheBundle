@@ -46,7 +46,7 @@ class WonderCache
     public function onKernelRequest(GetResponseEvent $event)
     {
 
-// return; // do deactivate the listenner action
+        if (!$this->container->getParameter('wondercache.activated')) return; // deactivate the listenner action
 
         $cacheKeyName = $this->getResponseCacheKeyName($event->getRequest()->getUri());
                     
@@ -69,7 +69,7 @@ class WonderCache
     public function onKernelResponse(PostResponseEvent $event)
     {
         
-// return $event->getResponse(); // do deactivate the listenner action
+        if (!$this->container->getParameter('wondercache.activated')) return $event->getResponse(); // deactivate the listenner action
 
         $cacheKeyName = $this->getResponseCacheKeyName($event->getRequest()->getUri());
             

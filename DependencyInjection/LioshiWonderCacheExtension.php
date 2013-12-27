@@ -29,6 +29,10 @@ class LioshiWonderCacheExtension extends Extension
         $loader->load('config.yml');
         $loader->load('services.yml');
 
+        if (isset($config['activated'])) {
+            $container->setParameter('wondercache.activated', $config['activated']);
+        }
+
         if (isset($config['memcached_response'])) {
             $this->newMemcachedClient('response', $config['memcached_response'], $container);
             // $container->setParameter('wondercache.memcached.clients', $config['clients']);
