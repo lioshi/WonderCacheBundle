@@ -9,31 +9,31 @@ A wonder cache bundle for symfony 2. A full response cache with automatic invali
 
 
 ##config.yml
-lioshi_wonder_cache:
-    activated: true
-    memcached_response:
-        hosts: 
-            - { dsn: localhost, port: 11211, weight: 100 }
-        options:
-            compression: true
-            serializer: 'json'
-            prefix_key: ""
-            hash: default
-            distribution: 'consistent'
-            libketama_compatible: true
-            buffer_writes: true
-            binary_protocol: true
-            no_block: true
-            tcp_nodelay: false
-            socket_send_size: 4096
-            socket_recv_size: 4096
-            connect_timeout: 1000
-            retry_timeout: 0
-            send_timeout: 0
-            recv_timeout: 0
-            poll_timeout: 1000
-            cache_lookups: false
-            server_failure_limit: 0
+    lioshi_wonder_cache:
+        activated: true
+        memcached_response:
+            hosts: 
+                - { dsn: localhost, port: 11211, weight: 100 }
+            options:
+                compression: true
+                serializer: 'json'
+                prefix_key: ""
+                hash: default
+                distribution: 'consistent'
+                libketama_compatible: true
+                buffer_writes: true
+                binary_protocol: true
+                no_block: true
+                tcp_nodelay: false
+                socket_send_size: 4096
+                socket_recv_size: 4096
+                connect_timeout: 1000
+                retry_timeout: 0
+                send_timeout: 0
+                recv_timeout: 0
+                poll_timeout: 1000
+                cache_lookups: false
+                server_failure_limit: 0
 
 ##Usage
 ### response cache support  
