@@ -88,3 +88,8 @@ Need configuration response.client
             )
         );
 No cacheKeyName, the entire response is cached. 
+
+
+##Credits
+
+LSW/MemCahcebunfle...
