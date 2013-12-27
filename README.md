@@ -1,7 +1,5 @@
-WARNING: _Unstable_
-===================
-__UNDER CONSTRUCTION__
-======================
+WARNING: __UNDER CONSTRUCTION__
+--
 
 
 WonderCacheBundle 
@@ -17,8 +15,6 @@ A full response cache with automatic invalidation via Doctrine event.
 
 - PHP 5.3.x or 5.4.x
 - php5-memcached 2.x
-
-NB: Unlike the PHP "memcache" extension, the PHP "memcached" extension is not (yet) included in the PHP Windows binaries.
 
 ## Installation
 
