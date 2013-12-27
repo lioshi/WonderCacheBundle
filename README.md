@@ -5,6 +5,9 @@ A wonder cache bundle for symfony 2. A full response cache with automatic invali
 Inspired by https://github.com/LeaseWeb/LswMemcacheBundle.
 
 
+![screenshot](https://raw.github.com/lioshi/WonderCacheBundle/master/Resources/images/wondercache_workflow.png)
+
+
 ##config.yml
 
 lioshi_wonder_cache:
