@@ -62,6 +62,7 @@ class WonderCache
                 $this->container->get('memcached.response')->set($cacheKeyName, $response, 0);
                 if ($this->getLinkedEntities()){
                     $this->addLinkedEntitiesToCachedKeys($cacheKeyName, $this->getLinkedEntities(), 'response');
+                    // TODO: add webdebug bar info
                 }
             }
 

@@ -16,43 +16,39 @@ caching support or expensive API calls by implementing the caching using Memcach
 This Symfony2 bundle will provide Memcache integration into Symfony2 and Doctrine for session storage and caching. 
 It has full Web Debug Toolbar integration that allows you to analyze and debug the cache behavior and performance.
 
-
-####Commands
-The ```wondercache:clear``` can delete all memcached keys and all memcached keys with prefix too
-The ```wondercache:list``` can list all memcached keys and can display a key
-
 ---
 
-### Requirements
+## Requirements
 
 - PHP 5.3.x or 5.4.x
-- php5-memcached 1.x or 2.x (this is the PHP "memcached" extension that uses "libmemcached")
+- php5-memcached 2.x
 
 NB: Unlike the PHP "memcache" extension, the PHP "memcached" extension is not (yet) included in the PHP Windows binaries.
 
-### Installation
+## Installation
 
-To install LswMemcacheBundle with Composer just add the following to your 'composer.json' file:
+To install WonderCacheBundle with Composer just add the following to your 'composer.json' file:
 
     "repositories": [
         {
             "type": "vcs",
-            "url": "https://github.com/lioshi/LswMemcacheBundle.git"
+            "url": "https://github.com/lioshi/WonderCacheBundle.git"
         }
     ],
+NB: _not yet in packagist_
 
 (...)
 
     {
         require: {
-            "lioshi/memcache-bundle": "*",
+            "lioshi/wonder-cache-bundle": "dev-master",
             ...
         }
     }
 
 The next thing you should do is install the bundle by executing the following command:
 
-    php composer.phar update leaseweb/memcache-bundle
+    php composer.phar update lioshi/wonder-cache-bundle
 
 Finally, add the bundle to the registerBundles function of the AppKernel class in the 'app/AppKernel.php' file:
 
@@ -60,46 +56,44 @@ Finally, add the bundle to the registerBundles function of the AppKernel class i
     {
         $bundles = array(
             ...
-            new Lsw\MemcacheBundle\LswMemcacheBundle(),
+            new Lioshi\WonderCacheBundle\LioshiWonderCacheBundle(),
             ...
         );
 
 Configure the bundle by adding the following to app/config/config.yml':
 
 ```yml
-lsw_memcache:
-    clients:
-        default:
-            hosts:
-              - { dsn: localhost, port: 11211 }
-```
-
-Install the following dependencies (in Debian based systems using 'apt'):
-
-    apt-get install memcached php5-memcached
-
-Do not forget to restart you web server after adding the Memcache module. Now the Memcache
-information should show up with a little double arrow (fast-forward) icon in your debug toolbar.
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-##config.yml
     lioshi_wonder_cache:
         activated: true
         memcached_response:
             hosts: 
-                - { dsn: localhost, port: 11211, weight: 100 }
+                - { dsn: localhost, port: 11211 }
+```
+
+Install the following dependencies:
+
+(in Debian based systems)
+    
+    apt-get install memcached php5-memcached
+
+(in Centos based systems)
+   
+    yum install php-pecl-memcached 
+
+Do not forget to restart you web server after adding the Memcache module. 
+
+
+## Commands
+The ```wondercache:clear``` command deletes all memcached's items and ```wondercache:list``` command can list all memcached's keys and can display content of a key.
+
+## Full configuration (config.yml)
+```yml
+    lioshi_wonder_cache:
+        activated: true
+        memcached_response:
+            hosts: 
+                - { dsn: localhost, port: 11211, weight: 60 }
+                - { dsn: localhost, port: 11212, weight: 30 }
             options:
                 compression: true
                 serializer: 'json'
@@ -120,19 +114,26 @@ information should show up with a little double arrow (fast-forward) icon in you
                 poll_timeout: 1000
                 cache_lookups: false
                 server_failure_limit: 0
+```
 
-##Usage
-### response cache support  
+## Usage
+Into a controller you can run() wonderCache and specified optionnaly entities which arer linked to the controller response.
+The following exemple means that the controller's response depends on (or is linked to):
+- 3 packs
+- 2 exports
+- all cars
+
         $this->container->get('wonder.cache')
             ->run()
             ->addLinkedEntities(
             array(
-                'Testa\ArticleBundle\Entity\Pack' => array(1,65,988), 
-                'Testa\ArticleBundle\Entity\Export' => array(65,22)
+                'Me\MyBundle\Entity\Pack' => array(1,65,988), 
+                'Me\MyBundle\Entity\Export' => array(65,22),
+                'Me\MyBundle\Entity\Cars' => array()
             )
         );
 
-##Credits
+## Credits
 Inspired by https://github.com/LeaseWeb/LswMemcacheBundle:
 - DependencyInjection/Configuration.php
 - DependencyInjection/LswMemcacheExtension.php

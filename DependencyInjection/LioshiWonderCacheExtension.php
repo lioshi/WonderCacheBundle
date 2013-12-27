@@ -39,8 +39,6 @@ class LioshiWonderCacheExtension extends Extension
             $this->newMemcachedClient('response', $config['memcached_response'], $container);
             $container->setParameter('wondercache.memcached.response', $config['memcached_response']);
         }
-
-
     }
 
     /**
@@ -118,7 +116,6 @@ class LioshiWonderCacheExtension extends Extension
         // Add the service to the container
         $serviceName = sprintf('memcached.%s', $name);
         $container->setDefinition($serviceName, $memcached);
-
     }
 
 }
