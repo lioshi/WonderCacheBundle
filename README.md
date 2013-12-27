@@ -1,5 +1,5 @@
-WonderCacheBundle
-=================
+WonderCacheBundle (UNDER CONSTRUCTION)
+======================================
 
 A wonder cache bundle for symfony 2. A full response cache with automatic invalidation.
 Inspired by https://github.com/LeaseWeb/LswMemcacheBundle.
