@@ -6,17 +6,10 @@ __UNDER CONSTRUCTION__
 
 WonderCacheBundle 
 =================
-A wonder cache bundle for symfony 2. A full response cache with automatic invalidation via Doctrine event.
+A wonder cache bundle for symfony 2. 
+A full response cache with automatic invalidation via Doctrine event.
 
 ![screenshot](https://raw.github.com/lioshi/WonderCacheBundle/master/Resources/images/wondercache_workflow.png)
-
-If you want to optimize your web application for high load and/or low load times Memcache is an indispensable tool.
-It will manage your session data without doing disk I/O on web or database servers. You can also run it as a
-central object storage for your website. In this role it is used for caching database queries using the Doctrine 
-caching support or expensive API calls by implementing the caching using Memcache "get" and "set" commands.
-
-This Symfony2 bundle will provide Memcache integration into Symfony2 and Doctrine for session storage and caching. 
-It has full Web Debug Toolbar integration that allows you to analyze and debug the cache behavior and performance.
 
 ---
 
@@ -125,6 +118,7 @@ The following exemple means that the controller's response depends on (or is lin
 - 2 exports
 - all cars
 
+Exemple's code for a controller
 
         $this->container->get('wonder.cache')
             ->run()
