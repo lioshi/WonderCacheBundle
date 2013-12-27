@@ -29,7 +29,7 @@ class ClearCommand extends ContainerAwareCommand
    {
       $this
         ->setName('wondercache:clear')
-        ->setDescription('Invalidate all Memcache items')
+        ->setDescription('Delete all items')
         ->setDefinition(array(
             // new InputArgument('client', InputArgument::REQUIRED, 'The client'),
             // new InputArgument('prefix', InputArgument::OPTIONAL, 'Delete only cache keys with this prefix'),

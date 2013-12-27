@@ -1,16 +1,16 @@
-WonderCacheBundle (UNDER CONSTRUCTION)
-======================================
+WonderCacheBundle 
+=================
 
-A wonder cache bundle for symfony 2. A full response cache with automatic invalidation.
-Inspired by https://github.com/LeaseWeb/LswMemcacheBundle.
+__Unstable UNDER CONSTRUCTION__
 
+A wonder cache bundle for symfony 2. A full response cache with automatic invalidation via Doctrine event.
 
 ![screenshot](https://raw.github.com/lioshi/WonderCacheBundle/master/Resources/images/wondercache_workflow.png)
 
 
 ##config.yml
-
 lioshi_wonder_cache:
+    activated: true
     memcached_response:
         hosts: 
             - { dsn: localhost, port: 11211, weight: 100 }
@@ -35,59 +35,20 @@ lioshi_wonder_cache:
             cache_lookups: false
             server_failure_limit: 0
 
-
 ##Usage
-### manual cache support TODO
-if ($this->container->get('wonder.cache')->get($keyCacheName)){
-    
-    return $this->container->get('wonder.cache')->get($keyCacheName);
-
-} else {
-    
-    $return = (...)
-
-        $this->container->get('wonder.cache')->set(
-            $content, 
-            array(
-                'Testa\ArticleBundle\Entity\Pack' => array(1,65,988), 
-                'Testa\ArticleBundle\Entity\Export' => array(65,22)
-            ),
-            $cacheKeyName,
-            'default',
-            3600
-        );
-
-    return $return;
-}
-
-### object cache support TODO
-Need configuration object.client
-
-        $this->container->get('wonder.cache')->set(
-            $content, 
-            array(
-                'Testa\ArticleBundle\Entity\Pack' => array(1,65,988), 
-                'Testa\ArticleBundle\Entity\Export' => array(65,22)
-            ),
-            $cacheKeyName
-        );
-
-
-
-
-
-### response cache support (all page) DONE
-Need configuration response.client
-
-        $this->container->get('wonder.cache')->addLinkedEntities(
+### response cache support  
+        $this->container->get('wonder.cache')
+            ->run()
+            ->addLinkedEntities(
             array(
                 'Testa\ArticleBundle\Entity\Pack' => array(1,65,988), 
                 'Testa\ArticleBundle\Entity\Export' => array(65,22)
             )
         );
-No cacheKeyName, the entire response is cached. 
-
 
 ##Credits
+Inspired by https://github.com/LeaseWeb/LswMemcacheBundle:
+- DependencyInjection/Configuration.php
+- DependencyInjection/LswMemcacheExtension.php
+- Command/ClearCommand.php
 
-LSW/MemCahcebunfle...

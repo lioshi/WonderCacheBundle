@@ -22,9 +22,6 @@ class CacheInvalidator
         $em = $eventArgs->getEntityManager();
         $uow = $em->getUnitOfWork();
 
-        // $uow->getScheduledCollectionDeletions() 
-        // $uow->getScheduledCollectionUpdates()
-
         $scheduledEntityChanges = array(
             'insert' => $uow->getScheduledEntityInsertions(),
             'update' => $uow->getScheduledEntityUpdates(),
@@ -50,7 +47,7 @@ class CacheInvalidator
 
         $WonderCache = new WonderCache($this->container);
         $MemcacheTools = new MemcacheTools($this->container);
-        $memcached = $MemcacheTools->getMemCachedAllServers(); 
+        $memcached = $MemcacheTools->getMemCachedByClient('response'); // invalidation of memcached's client response
 
         $LinkedModelsToCachedKeys = $memcached->get($WonderCache->getLinkedEntitiesToCachedKeysFilename());
         // $LinkedModelsToCachedKeys = '__linkedModelsToCachedKeys';
