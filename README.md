@@ -1,9 +1,9 @@
+WARNING: _Unstable UNDER CONSTRUCTION_
+========================================
+
+
 WonderCacheBundle 
 =================
-
-__Unstable UNDER CONSTRUCTION__
-===============================
-
 A wonder cache bundle for symfony 2. A full response cache with automatic invalidation via Doctrine event.
 
 ![screenshot](https://raw.github.com/lioshi/WonderCacheBundle/master/Resources/images/wondercache_workflow.png)
