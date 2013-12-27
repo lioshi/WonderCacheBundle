@@ -7,6 +7,91 @@ A wonder cache bundle for symfony 2. A full response cache with automatic invali
 
 ![screenshot](https://raw.github.com/lioshi/WonderCacheBundle/master/Resources/images/wondercache_workflow.png)
 
+If you want to optimize your web application for high load and/or low load times Memcache is an indispensable tool.
+It will manage your session data without doing disk I/O on web or database servers. You can also run it as a
+central object storage for your website. In this role it is used for caching database queries using the Doctrine 
+caching support or expensive API calls by implementing the caching using Memcache "get" and "set" commands.
+
+This Symfony2 bundle will provide Memcache integration into Symfony2 and Doctrine for session storage and caching. 
+It has full Web Debug Toolbar integration that allows you to analyze and debug the cache behavior and performance.
+
+
+####Commands
+The ```wondercache:clear``` can delete all memcached keys and all memcached keys with prefix too
+The ```wondercache:list``` can list all memcached keys and can display a key
+
+---
+
+### Requirements
+
+- PHP 5.3.x or 5.4.x
+- php5-memcached 1.x or 2.x (this is the PHP "memcached" extension that uses "libmemcached")
+
+NB: Unlike the PHP "memcache" extension, the PHP "memcached" extension is not (yet) included in the PHP Windows binaries.
+
+### Installation
+
+To install LswMemcacheBundle with Composer just add the following to your 'composer.json' file:
+
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "https://github.com/lioshi/LswMemcacheBundle.git"
+        }
+    ],
+
+(...)
+
+    {
+        require: {
+            "lioshi/memcache-bundle": "*",
+            ...
+        }
+    }
+
+The next thing you should do is install the bundle by executing the following command:
+
+    php composer.phar update leaseweb/memcache-bundle
+
+Finally, add the bundle to the registerBundles function of the AppKernel class in the 'app/AppKernel.php' file:
+
+    public function registerBundles()
+    {
+        $bundles = array(
+            ...
+            new Lsw\MemcacheBundle\LswMemcacheBundle(),
+            ...
+        );
+
+Configure the bundle by adding the following to app/config/config.yml':
+
+```yml
+lsw_memcache:
+    clients:
+        default:
+            hosts:
+              - { dsn: localhost, port: 11211 }
+```
+
+Install the following dependencies (in Debian based systems using 'apt'):
+
+    apt-get install memcached php5-memcached
+
+Do not forget to restart you web server after adding the Memcache module. Now the Memcache
+information should show up with a little double arrow (fast-forward) icon in your debug toolbar.
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 ##config.yml
     lioshi_wonder_cache:
