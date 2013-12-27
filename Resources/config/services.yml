@@ -13,5 +13,11 @@ services:
             - { name: kernel.event_listener, event: kernel.request, method: onKernelRequest }
             - { name: kernel.event_listener, event: kernel.terminate, method: onKernelResponse }
 
+    wonder.cache.logger:
+        class: Lioshi\WonderCacheBundle\Logger\WonderCacheLogger
 
-
+    wonder.cache.data_collector:
+        class: Lioshi\WonderCacheBundle\DataCollector\WonderCacheDataCollector
+        arguments: [@wonder.cache.logger]
+        tags: 
+            - { name: data_collector, template: "WonderCacheBundle:Collector:wondercache", id: "wondercache" }

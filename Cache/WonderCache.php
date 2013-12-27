@@ -37,7 +37,9 @@ class WonderCache
             $response->headers->add(array('wc-response' => true ));
             // info of entities linked to response cache
             // TODO: add webdebug bar info
-            
+            $this->get('wonder.cache.logger')->add('Response from cache for: '.$event->getRequest()->getUri());
+
+
             $event->setResponse($response);
             return; 
         } else {
@@ -63,6 +65,7 @@ class WonderCache
                 if ($this->getLinkedEntities()){
                     $this->addLinkedEntitiesToCachedKeys($cacheKeyName, $this->getLinkedEntities(), 'response');
                     // TODO: add webdebug bar info
+                    $this->get('wonder.cache.logger')->add('Response save to cache for: '.$event->getRequest()->getUri());
                 }
             }
 
