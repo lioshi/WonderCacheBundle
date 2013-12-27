@@ -22,27 +22,22 @@ class Configuration implements ConfigurationInterface
         $treeBuilder = new TreeBuilder();
         $rootNode = $treeBuilder->root('lioshi_wonder_cache');
         $rootNode
-            ->append($this->addResponseSection())
-            ->append($this->addObjectSection())
-            ->append($this->addclientsSection())
+            ->append($this->addMemcachedSection())
         ;
 
         return $treeBuilder;
     }
 
     /**
-     * Configure the "lioshi_wondercache.clients" section
      *
      * @return ArrayNodeDefinition
      */
-    private function addclientsSection()
+    private function addMemcachedSection()
     {
         $tree = new TreeBuilder();
-        $node = $tree->root('clients');
+        $node = $tree->root('memcached_response');
 
         $node
-            ->requiresAtLeastOneElement()
-            ->useAttributeAsKey('name')
             ->prototype('array')
                 ->children()
                     ->scalarNode('persistent_id')
@@ -79,35 +74,6 @@ class Configuration implements ConfigurationInterface
 
         return $node;
     }
-
-     private function addResponseSection()
-     {
-         $tree = new TreeBuilder();
-         $node = $tree->root('response');
-
-         $node
-             ->children()
-                 ->scalarNode('client')->isRequired()->end()
-             ->end()
-         ->end();
-
-         return $node;
-     }
-
-
-      private function addObjectSection()
-      {
-          $tree = new TreeBuilder();
-          $node = $tree->root('object');
-
-          $node
-              ->children()
-                  ->scalarNode('client')->isRequired()->end()
-              ->end()
-          ->end();
-
-          return $node;
-      }
 
     /**
      * Configure the "lsw_memcache.options" section

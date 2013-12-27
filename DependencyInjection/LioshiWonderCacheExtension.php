@@ -29,18 +29,12 @@ class LioshiWonderCacheExtension extends Extension
         $loader->load('config.yml');
         $loader->load('services.yml');
 
-        if (isset($config['clients'])) {
-            $this->addClients($config['clients'], $container);
-            $container->setParameter('wondercache.memcached.clients', $config['clients']);
+        if (isset($config['memcached_response'])) {
+            $this->newMemcachedClient('response', $config['memcached_response'], $container);
+            // $container->setParameter('wondercache.memcached.clients', $config['clients']);
         }
 
-        if (isset($config['response'])) {
-            $this->enableResponseSupport($config, $container);
-        }
 
-        if (isset($config['object'])) {
-            $this->enableObjectSupport($config, $container);
-        }
     }
 
     private function enableResponseSupport($config, ContainerBuilder $container)
@@ -72,21 +66,6 @@ class LioshiWonderCacheExtension extends Extension
     }
 
     /**
-     * Adds memcache/memcached clients to the service contaienr
-     *
-     * @param array            $clients   Array of client configurations
-     * @param ContainerBuilder $container Service container
-     *
-     * @throws \LogicException
-     */
-    private function addClients(array $clients, ContainerBuilder $container)
-    {
-        foreach ($clients as $client => $memcachedConfig) {
-            $this->newMemcachedClient($client, $memcachedConfig, $container);
-        }
-    }
-
-    /**
      * Creates a new Memcached definition
      *
      * @param string           $name      Client name
@@ -102,8 +81,7 @@ class LioshiWonderCacheExtension extends Extension
             throw new \LogicException('Memcached extension is not loaded! To configure memcached clients it MUST be loaded!');
         }
 
-        $memcached = new Definition('Lioshi\WonderCacheBundle\Cache\AntiDogPileMemcache');
-        $memcached->addArgument(new Parameter('kernel.debug'));
+        $memcached = new Definition('Lioshi\WonderCacheBundle\Cache\Memcache');
 
         // Check if it has to be persistent
         if (isset($config['persistent_id'])) {

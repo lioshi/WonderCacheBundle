@@ -25,7 +25,7 @@ class ListCommand extends ContainerAwareCommand
    protected function configure()
    {
       $this
-        ->setName('memcache:list')
+        ->setName('wondercache:list')
         ->setDescription('List all Memcache items')
         ->setDefinition(array(
             new InputArgument('client', InputArgument::REQUIRED, 'The client'),
@@ -96,7 +96,7 @@ class ListCommand extends ContainerAwareCommand
         if (!$input->getArgument('client')) {
             $client = $this->getHelper('dialog')->askAndValidate(
                 $output,
-                '<question>Please give the client (default):</question>',
+                '<info> Please give the client (default): </info>',
                 function($client)
                 {
                    if (empty($client)) {

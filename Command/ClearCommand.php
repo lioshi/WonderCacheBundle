@@ -28,7 +28,7 @@ class ClearCommand extends ContainerAwareCommand
    protected function configure()
    {
       $this
-        ->setName('memcache:clear')
+        ->setName('wondercache:clear')
         ->setDescription('Invalidate all Memcache items')
         ->setDefinition(array(
             new InputArgument('client', InputArgument::REQUIRED, 'The client'),
