@@ -35,6 +35,17 @@ class WonderCache
 $this->container->get('wonder.cache.logger')->addInvalidation('TEST: cause not work in cacheInvalidator : cause redirect and loose infos : solution to store data_collector when redirect?...');
 is there an symfony2 event when sub-request, to store when fired?
 
+try kernel.controller   KernelEvents::CONTROLLER    FilterControllerEvent => if controller redirect then store datat_collector
+
+public integer getRequestType()
+
+Returns the request type the kernel is currently processing
+Return Value
+integer One of HttpKernelInterface::MASTERREQUEST and HttpKernelInterface::SUBREQUEST
+
+
+when subrequest then store logger in a new, or load logger from session... then save logger to session when masterrequest
+                                                ========================
 
 
         if (!$this->container->getParameter('wondercache.activated')) return; // deactivate the listenner action
