@@ -38,4 +38,34 @@ class WonderCacheDataCollector extends DataCollector
     {
         return $this->data['logs'];
     }
+
+    public function getNbrLogsInfos()
+    {
+        return count($this->data['logs']['infos']);
+    }
+
+    public function getLogsInfos()
+    {
+        return $this->data['logs']['infos'];
+    }
+
+    public function getNbrLogsWarnings()
+    {
+        return count($this->data['logs']['warnings']);
+    }
+
+    public function getLogsWarnings()
+    {
+        return $this->data['logs']['warnings'];
+    }
+
+    public function getNbrLogsInvalidations()
+    {
+        return count($this->data['logs']['invalidations']);
+    }
+
+    public function getLogsInvalidations()
+    {
+        return $this->data['logs']['invalidations'];
+    }
 }

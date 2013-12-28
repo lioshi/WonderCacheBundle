@@ -51,19 +51,23 @@ class CacheInvalidator
 
         $LinkedModelsToCachedKeys = $memcached->get($WonderCache->getLinkedEntitiesToCachedKeysFilename());
         // $LinkedModelsToCachedKeys = '__linkedModelsToCachedKeys';
-        $cachelogs = count($LinkedModelsToCachedKeys)."\n";
+        // $cachelogs = count($LinkedModelsToCachedKeys)."\n";
 
         foreach ($classesToDelete as $classToDelete => $idsFlush) {
 
-            $cachelogs .= 'Doctrine flush Classes to delete : '.$classToDelete."\n";
-            $cachelogs .= 'Doctrine flush Ids               : '.implode(',',$idsFlush)."\n";
+            $this->container->get('wonder.cache.logger')->addInvalidation('Doctrine flush Classes to delete : '.$classToDelete);
+            $this->container->get('wonder.cache.logger')->addInvalidation('Doctrine flush Ids               : '.implode(',',$idsFlush));
 
             if (isset($LinkedModelsToCachedKeys[$classToDelete])){
                 foreach ($LinkedModelsToCachedKeys[$classToDelete] as $key => $entitiesIds) {
-                    $cachelogs .= 'Ids entities of cache            : '.implode(',',$entitiesIds)."\n";
+                    
+                    $this->container->get('wonder.cache.logger')->addInvalidation('Ids entities of cache            : '.implode(',',$entitiesIds));
+                    
                     if (count(array_intersect($entitiesIds, $idsFlush))){
                         $memcached->delete($key);
-                        $cachelogs .= 'Key deleted                      : '.$key."\n";
+
+                        $this->container->get('wonder.cache.logger')->addInvalidation('Key deleted : '.$key);
+
                         // deleted entrie in 
                         unset($LinkedModelsToCachedKeys[$classToDelete][$key]);
                         $memcached->set($WonderCache->getLinkedEntitiesToCachedKeysFilename(), $LinkedModelsToCachedKeys, 0);

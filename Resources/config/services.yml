@@ -8,14 +8,14 @@ services:
         public: false
         tags:
             - { name: doctrine.event_listener, event: onFlush }
-        arguments: [ @service_container ]
+        arguments: [ @service_container, @wonder.cache.logger ]
 
     wonder.cache:
         class: Lioshi\WonderCacheBundle\Cache\WonderCache
         arguments: ['@service_container']
         tags:
             - { name: kernel.event_listener, event: kernel.request, method: onKernelRequest }
-            - { name: kernel.event_listener, event: kernel.terminate, method: onKernelResponse }
+            - { name: kernel.event_listener, event: kernel.response, method: onKernelResponse }
 
     wonder.cache.logger:
         class: Lioshi\WonderCacheBundle\Logger\WonderCacheLogger

@@ -28,6 +28,15 @@ class WonderCache
 
     public function onKernelRequest(GetResponseEvent $event)
     {
+        
+
+
+
+$this->container->get('wonder.cache.logger')->addInvalidation('TEST: cause not work in cacheInvalidator : cause redirect and loose infos : solution to store data_collector when redirect?...');
+
+
+
+
         if (!$this->container->getParameter('wondercache.activated')) return; // deactivate the listenner action
 
         $cacheKeyName = $this->getResponseCacheKeyName($event->getRequest()->getUri());
@@ -37,17 +46,18 @@ class WonderCache
             $response->headers->add(array('wc-response' => true ));
             // info of entities linked to response cache
             // TODO: add webdebug bar info
-            $this->get('wonder.cache.logger')->add('Response from cache for: '.$event->getRequest()->getUri());
-
+            $this->container->get('wonder.cache.logger')->addInfo('Response from cache for: '.$event->getRequest()->getUri());
 
             $event->setResponse($response);
             return; 
         } else {
+
+            $this->container->get('wonder.cache.logger')->addWarning('Response not from cache for: '.$event->getRequest()->getUri());
             return;
         }
     }
 
-    public function onKernelResponse(PostResponseEvent $event)
+    public function onKernelResponse(FilterResponseEvent $event)
     {
         
         if (!$this->container->getParameter('wondercache.activated')) return $event->getResponse(); // deactivate the listenner action
@@ -55,6 +65,8 @@ class WonderCache
         $cacheKeyName = $this->getResponseCacheKeyName($event->getRequest()->getUri());
             
         if ($this->container->get('memcached.response')->get($cacheKeyName)){
+
+            $this->container->get('wonder.cache.logger')->addInfo('Response allready saved to cache for: '.$event->getRequest()->getUri());
             return;
         } else {
 
@@ -65,8 +77,12 @@ class WonderCache
                 if ($this->getLinkedEntities()){
                     $this->addLinkedEntitiesToCachedKeys($cacheKeyName, $this->getLinkedEntities(), 'response');
                     // TODO: add webdebug bar info
-                    $this->get('wonder.cache.logger')->add('Response save to cache for: '.$event->getRequest()->getUri());
+                    $this->container->get('wonder.cache.logger')->addInfo('Response saved to cache for: '.$event->getRequest()->getUri());
+                } else {
+                    $this->container->get('wonder.cache.logger')->addWarning('Response cache specified without entities linked for: '.$event->getRequest()->getUri());
                 }
+            } else {
+                $this->container->get('wonder.cache.logger')->addWarning('Response cache not specified for: '.$event->getRequest()->getUri());
             }
 
             return $response;
