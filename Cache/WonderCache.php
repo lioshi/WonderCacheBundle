@@ -36,6 +36,8 @@ class WonderCache
 BIG idea:  on kernel.terminate event: store logger datas in a memcached entry. Then save 10 last uri's logger in this memcached entry, 
 and logger->getLogs() put those 10 last uri's loggers to display by data_collector
 *****************************************************************************************************************************************
+BIGGER idea: logger->add() write in memcahced and logger->getLogs() read from memcached, no more issue with redirect, in memcached we store logs relative to 10 last uri!!!!
+******************************************************************************************************************************************
 
 $this->container->get('wonder.cache.logger')->addInvalidation('TEST: cause not work in cacheInvalidator : cause redirect and loose infos : solution to store data_collector when redirect?...');
 is there an symfony2 event when sub-request, to store when fired?
