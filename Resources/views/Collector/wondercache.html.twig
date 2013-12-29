@@ -41,7 +41,7 @@
 
 <span class="label">
     <span class="icon">
-      <img width="20" height="28" alt="API" src="data:image/png;base64,{{ collector.iconbase64 }}" />
+      <img width="20" height="28" alt="API" src="data:image/png;base64,{{ collector.iconbase64('') }}" />
     </span>
     <strong>WonderCache</strong>
     <span class="count">
@@ -59,7 +59,6 @@
             <em>No log.</em>
         </p>
     {% else %}
-        <h2>Infos</h2>
         {% if not collector.nbrlogsinfos %}
             <p>
                 <em>No info.</em>
@@ -67,14 +66,15 @@
         {% else %}
             <ul class="alt">
                 {% for i, info in collector.logsinfos %}
-                    <li class="{{ i is even ? 'odd' : 'even' }}">
-                        <div>
-                            {{ info.log }}<br />
-                         </div>
-                    </li>
+                    <h2>{{ info.log }}</h2>
                     <li class="{{ i is even ? 'odd' : 'even' }}">
                         {% if info.entities|length %}
                             <table>
+                                <thead>
+                                    <tr>
+                                        <th colspan="2">Entities linked</th>
+                                    </tr>
+                                </thead>
                                 <thead>
                                     <tr>
                                         <th scope="col">Entity</th>

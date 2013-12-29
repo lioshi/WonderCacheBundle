@@ -67,7 +67,7 @@ class WonderCache
                 if ($this->getLinkedEntities()){
                     $this->addLinkedEntitiesToCachedKeys($cacheKeyName, $this->getLinkedEntities(), 'response');
 
-                    $this->container->get('wonder.cache.logger')->addInfo('Response saved into cache with entities linked', $this->getLinkedEntities());
+                    $this->container->get('wonder.cache.logger')->addInfo('Response saved into cache', $this->getLinkedEntities());
                 } else {
                     $this->container->get('wonder.cache.logger')->addWarning('Response saved into cache without entities linked');
                 }
@@ -129,23 +129,22 @@ class WonderCache
 
     public function getLinkedEntitiesFromCachedKeys($key, $client){
 
-*******************
-        // if (is_array($entities) && count($entities) && $client){
-        
-        //     $linkedEntitiesToCachedKeysFile = $this->getLinkedEntitiesToCachedKeysFilename();    
+        $entities = array();
+        $linkedEntitiesToCachedKeysFile = $this->getLinkedEntitiesToCachedKeysFilename();    
 
-        //     foreach ($entities as $linkedModel => $entitiesIds) {
-        //         $entities[$linkedModel] = array();
-        //         $entities[$linkedModel][$key] = $entitiesIds;
-        //     }
-
-        //     if ($this->container->get('memcached.'.$client)->get($linkedEntitiesToCachedKeysFile)){
-        //         $linkedEntitiesToCachedKeysFileContent = $this->container->get('memcached.'.$client)->get($linkedEntitiesToCachedKeysFile);
-        //         $entities = array_merge_recursive($linkedEntitiesToCachedKeysFileContent,$entities);
-        //     } 
+        if ($this->container->get('memcached.'.$client)->get($linkedEntitiesToCachedKeysFile)){
+            $linkedEntitiesToCachedKeysFileContent = $this->container->get('memcached.'.$client)->get($linkedEntitiesToCachedKeysFile);
+                
+            foreach ($linkedEntitiesToCachedKeysFileContent as $entity => $cacheInfos) {
+                foreach ($cacheInfos as $cacheKey => $ids) {
+                     if ($cacheKey == $key){
+                        $entities[$entity] = $ids;
+                     }
+                } 
+            }
+        } 
             
-        //     $this->container->get('memcached.'.$client)->set($linkedEntitiesToCachedKeysFile, $entities,0); 
-        // }
+        return $entities;
     }
 
 
