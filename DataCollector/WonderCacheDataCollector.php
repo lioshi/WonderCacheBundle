@@ -71,7 +71,7 @@ class WonderCacheDataCollector extends DataCollector
 
     public function getIconBase64()
     {
-        return base64_encode(file_get_contents(dirname(__FILE__).'/../Resources/images/icon_green.png'));
+        return base64_encode(file_get_contents(dirname(__FILE__).'/../Resources/images/icon.png'));
     }
     
 
