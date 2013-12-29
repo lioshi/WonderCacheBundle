@@ -37,7 +37,8 @@ class WonderCache
             $response = $this->container->get('memcached.response')->get($cacheKeyName);
             $response->headers->add(array('wc-response' => true ));
 
-            $this->container->get('wonder.cache.logger')->addInfo('Response retrieved from cache');
+            $linkedEntities = $this->getLinkedEntitiesFromCachedKeys($cacheKeyName, 'response');
+            $this->container->get('wonder.cache.logger')->addInfo('Response retrieved from cache', $linkedEntities);
 
             $event->setResponse($response);
             return; 
@@ -125,6 +126,32 @@ class WonderCache
             $this->container->get('memcached.'.$client)->set($linkedEntitiesToCachedKeysFile, $entities,0); 
         }
     }
+
+    public function getLinkedEntitiesFromCachedKeys($key, $client){
+
+*******************
+        // if (is_array($entities) && count($entities) && $client){
+        
+        //     $linkedEntitiesToCachedKeysFile = $this->getLinkedEntitiesToCachedKeysFilename();    
+
+        //     foreach ($entities as $linkedModel => $entitiesIds) {
+        //         $entities[$linkedModel] = array();
+        //         $entities[$linkedModel][$key] = $entitiesIds;
+        //     }
+
+        //     if ($this->container->get('memcached.'.$client)->get($linkedEntitiesToCachedKeysFile)){
+        //         $linkedEntitiesToCachedKeysFileContent = $this->container->get('memcached.'.$client)->get($linkedEntitiesToCachedKeysFile);
+        //         $entities = array_merge_recursive($linkedEntitiesToCachedKeysFileContent,$entities);
+        //     } 
+            
+        //     $this->container->get('memcached.'.$client)->set($linkedEntitiesToCachedKeysFile, $entities,0); 
+        // }
+    }
+
+
+
+
+
 
     // TODO: manage data's cache
     // public function set($content, $linkedEntities, $cacheKeyName = false, $client = false,  $ttl = 0){
