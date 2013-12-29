@@ -29,32 +29,6 @@ class WonderCache
     public function onKernelRequest(GetResponseEvent $event)
     {
         
-
-
-
-// *********************************************************************************************************************************************
-// BIG idea:  on kernel.terminate event: store logger datas in a memcached entry. Then save 10 last uri's logger in this memcached entry, 
-// and logger->getLogs() put those 10 last uri's loggers to display by data_collector
-// *****************************************************************************************************************************************
-// BIGGER idea: logger->add() write in memcahced and logger->getLogs() read from memcached, no more issue with redirect, in memcached we store logs relative to 10 last uri!!!!
-// ******************************************************************************************************************************************
-
-// $this->container->get('wonder.cache.logger')->addInvalidation('TEST: cause not work in cacheInvalidator : cause redirect and loose infos : solution to store data_collector when redirect?...');
-// is there an symfony2 event when sub-request, to store when fired?
-
-// try kernel.controller   KernelEvents::CONTROLLER    FilterControllerEvent => if controller redirect then store datat_collector
-
-// public integer getRequestType()
-
-// Returns the request type the kernel is currently processing
-// Return Value
-// integer One of HttpKernelInterface::MASTERREQUEST and HttpKernelInterface::SUBREQUEST
-
-
-// when subrequest then store logger in a new, or load logger from session... then save logger to session when masterrequest
-//                                                 ========================
-
-
         if (!$this->container->getParameter('wondercache.activated')) return; // deactivate the listenner action
 
         $cacheKeyName = $this->getResponseCacheKeyName($event->getRequest()->getUri());
@@ -62,15 +36,14 @@ class WonderCache
         if ($this->container->get('memcached.response')->get($cacheKeyName)){
             $response = $this->container->get('memcached.response')->get($cacheKeyName);
             $response->headers->add(array('wc-response' => true ));
-            // info of entities linked to response cache
-            // TODO: add webdebug bar info
-            $this->container->get('wonder.cache.logger')->addInfo('Response from cache for: '.$event->getRequest()->getUri());
+
+            $this->container->get('wonder.cache.logger')->addInfo('Response retrieved from cache');
 
             $event->setResponse($response);
             return; 
         } else {
 
-            $this->container->get('wonder.cache.logger')->addWarning('Response not from cache for: '.$event->getRequest()->getUri());
+            $this->container->get('wonder.cache.logger')->addWarning('Response missing from cache');
             return;
         }
     }
@@ -83,8 +56,6 @@ class WonderCache
         $cacheKeyName = $this->getResponseCacheKeyName($event->getRequest()->getUri());
             
         if ($this->container->get('memcached.response')->get($cacheKeyName)){
-
-            $this->container->get('wonder.cache.logger')->addInfo('Response allready saved to cache for: '.$event->getRequest()->getUri());
             return;
         } else {
 
@@ -94,10 +65,10 @@ class WonderCache
                 $this->container->get('memcached.response')->set($cacheKeyName, $response, 0);
                 if ($this->getLinkedEntities()){
                     $this->addLinkedEntitiesToCachedKeys($cacheKeyName, $this->getLinkedEntities(), 'response');
-                    // TODO: add webdebug bar info
-                    $this->container->get('wonder.cache.logger')->addInfo('Response saved to cache for: '.$event->getRequest()->getUri());
+
+                    $this->container->get('wonder.cache.logger')->addInfo('Response saved into cache with entities linked', $this->getLinkedEntities());
                 } else {
-                    $this->container->get('wonder.cache.logger')->addWarning('Response cache specified without entities linked for: '.$event->getRequest()->getUri());
+                    $this->container->get('wonder.cache.logger')->addWarning('Response saved into cache without entities linked');
                 }
             } else {
                 $this->container->get('wonder.cache.logger')->addWarning('Response cache not specified for: '.$event->getRequest()->getUri());

@@ -9,21 +9,18 @@ class WonderCacheLogger
         'invalidations' => array()
         );
  
-    public function addInfo($log)
+    public function addInfo($log, $entities = array())
     {
-        $time = microtime(true);
-        $this->logs['infos'][] = $log;
+        $this->logs['infos'][] = array('log' => $log, 'entities' => $entities);
     }
 
     public function addWarning($log)
     {
-        $time = microtime(true);
         $this->logs['warnings'][] = $log;
     }
  
     public function addInvalidation($log)
     {
-        $time = microtime(true);
         $this->logs['invalidations'][] = $log;
     }
 

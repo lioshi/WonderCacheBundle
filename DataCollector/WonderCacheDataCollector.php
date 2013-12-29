@@ -69,9 +69,9 @@ class WonderCacheDataCollector extends DataCollector
         return $this->data['logs']['invalidations'];
     }
 
-    public function getIconBase64()
+    public function getIconBase64($type)
     {
-        return base64_encode(file_get_contents(dirname(__FILE__).'/../Resources/images/icon.png'));
+        return base64_encode(file_get_contents(dirname(__FILE__).'/../Resources/images/icon_'.$type.'.png'));
     }
     
 
