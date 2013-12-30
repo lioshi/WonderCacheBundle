@@ -4,11 +4,17 @@ namespace Lioshi\WonderCacheBundle\Logger;
 class WonderCacheLogger 
 {
     private $logs = array(
+        'uri' => '',
         'infos' => array(),
         'warnings' => array(),
-        'invalidations' => array()
+        'errors' => array()
         );
  
+    public function addUri($uri)
+    {
+       $this->logs['uri'] = $uri;
+    }
+
     public function addInfo($log, $entities = array())
     {
         $this->logs['infos'][] = array('log' => $log, 'entities' => $entities);
@@ -19,9 +25,9 @@ class WonderCacheLogger
         $this->logs['warnings'][] = $log;
     }
  
-    public function addInvalidation($log)
+    public function addError($log)
     {
-        $this->logs['invalidations'][] = $log;
+        $this->logs['errors'][] = $log;
     }
 
     public function getLogs()

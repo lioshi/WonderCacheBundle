@@ -28,7 +28,12 @@ class WonderCacheDataCollector extends DataCollector
     {
         return 'wondercache';
     }
- 
+
+    public function getUri()
+    {
+        return $this->data['logs']['uri'];
+    }
+
     public function getNbrLogs()
     {
         return count($this->data['logs']);
@@ -59,14 +64,14 @@ class WonderCacheDataCollector extends DataCollector
         return $this->data['logs']['warnings'];
     }
 
-    public function getNbrLogsInvalidations()
+    public function getNbrLogsErrors()
     {
-        return count($this->data['logs']['invalidations']);
+        return count($this->data['logs']['errors']);
     }
 
-    public function getLogsInvalidations()
+    public function getLogsErrors()
     {
-        return $this->data['logs']['invalidations'];
+        return $this->data['logs']['errors'];
     }
 
     public function getIconBase64($type)

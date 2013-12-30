@@ -3,9 +3,9 @@
 {% block toolbar %}
     {% set icon %}
         
-        {% if collector.nbrlogsinvalidations > 0 %} <img width="20" height="28" alt="API" src="data:image/png;base64,{{ collector.iconbase64('invalidations') }}" />
-        {% elseif  collector.nbrlogswarnings > 0 %} <img width="20" height="28" alt="API" src="data:image/png;base64,{{ collector.iconbase64('warnings') }}" />
-        {% elseif     collector.nbrlogsinfos > 0 %} <img width="20" height="28" alt="API" src="data:image/png;base64,{{ collector.iconbase64('infos') }}" />
+        {% if collector.nbrlogserrors        > 0 %} <img height="28" alt="Wonder Cache" src="data:image/png;base64,{{ collector.iconbase64('errors') }}" />
+        {% elseif  collector.nbrlogswarnings > 0 %} <img height="28" alt="Wonder Cache" src="data:image/png;base64,{{ collector.iconbase64('warnings') }}" />
+        {% elseif     collector.nbrlogsinfos > 0 %} <img height="28" alt="Wonder Cache" src="data:image/png;base64,{{ collector.iconbase64('infos') }}" />
         {% endif %}
 
         <span class="sf-toolbar-info-piece-additional-detail">Wonder cache</span>
@@ -15,20 +15,20 @@
     {% set text %}
         {% if collector.nbrlogsinfos > 0 %}
             <div class="sf-toolbar-info-piece">
-                <b>Infos</b>
+                <b>Info</b>
                 <span class="sf-toolbar-status sf-toolbar-status-green">{{ collector.nbrlogsinfos }}</span>
             </div>
         {% endif %}
         {% if collector.nbrlogswarnings > 0 %}
             <div class="sf-toolbar-info-piece">
-                <b>Warnings</b>
+                <b>Warning</b>
                 <span class="sf-toolbar-status sf-toolbar-status-yellow">{{ collector.nbrlogswarnings }}</span>
             </div>
         {% endif %}
-        {% if collector.nbrlogsinvalidations > 0 %}
+        {% if collector.nbrlogserrors > 0 %}
             <div class="sf-toolbar-info-piece">
-                <b>Invalidations</b>
-                <span class="sf-toolbar-status sf-toolbar-status-red">{{ collector.nbrlogsinvalidations }}</span>
+                <b>Error</b>
+                <span class="sf-toolbar-status sf-toolbar-status-red">{{ collector.nbrlogserrors }}</span>
             </div>
         {% endif %}
     {% endset %}
@@ -41,32 +41,35 @@
 
 <span class="label">
     <span class="icon">
-      <img width="20" height="28" alt="API" src="data:image/png;base64,{{ collector.iconbase64('') }}" />
+      <img alt="Wonder Cache" src="data:image/png;base64,{{ collector.iconbase64('') }}" />
     </span>
-    <strong>WonderCache</strong>
-    <span class="count">
-        <span>{{ collector.nbrlogs }}</span>
-        <span>666 ms</span>
-    </span>
+    <strong>Wonder cache</strong>
+    {% set nblogs = 0 %}
+    {% if collector.nbrlogsinfos > 0 %}
+        {% set nblogs = nblogs + 1 %}
+    {% endif %}
+    {% if collector.nbrlogswarnings > 0 %}
+        {% set nblogs = nblogs + 1 %}
+    {% endif %}
+    {% if collector.nbrlogserrors > 0 %}
+        {% set nblogs  = nblogs + 1 %}
+    {% endif %}
+    {% if nblogs %}
+        <span class="count">
+            <span>{{ nblogs }}</span>
+        </span>
+    {% endif %}
 </span>
 
 {% endblock %}
  
 {% block panel %}
-
-    {% if not collector.nbrlogs %}
-        <p>
-            <em>No log.</em>
-        </p>
-    {% else %}
-        {% if not collector.nbrlogsinfos %}
-            <p>
-                <em>No info.</em>
-            </p>
-        {% else %}
+    <h2><img alt="Wonder Cache" src="data:image/png;base64,{{ collector.iconbase64('') }}" /> Wonder cache for <em>{{ collector.uri }}</em></h2>
+    {% if collector.nbrlogs %}
+        {% if collector.nbrlogsinfos %}
             <ul class="alt">
                 {% for i, info in collector.logsinfos %}
-                    <h2>{{ info.log }}</h2>
+                    <h3>{{ info.log }}</h3>
                     <li class="{{ i is even ? 'odd' : 'even' }}">
                         {% if info.entities|length %}
                             <table>
@@ -102,36 +105,48 @@
             </ul>
         {% endif %}
 
-        <h2>Warnings</h2>
-        {% if not collector.nbrlogswarnings %}
-            <p>
-                <em>No warning.</em>
-            </p>
-        {% else %}
+        {% if collector.nbrlogswarnings %}
+            <h2>Warning</h2>
             <ul class="alt">
                 {% for i, log in collector.logswarnings %}
-                    <li class="{{ i is even ? 'odd' : 'even' }}">
-                        <div>
-                            {{ log }}<br />
-                         </div>
-                    </li>
+                    {% if log is iterable %}
+                        <li class="{{ i is odd ? 'odd' : 'even' }}">
+                            {% for line in log %}
+                                <div>
+                                    {{ line }}<br />
+                                </div>
+                            {% endfor %}
+                        </li>
+                    {% else %}
+                        <li class="{{ i is odd ? 'odd' : 'even' }}">
+                            <div>
+                                {{ log }}<br />
+                             </div>
+                        </li>
+                    {% endif %}
                 {% endfor %}
             </ul>
         {% endif %}
 
-        <h2>Invalidations</h2>
-        {% if not collector.nbrlogsinvalidations %}
-            <p>
-                <em>No invalidation.</em>
-            </p>
-        {% else %}
+        {% if collector.nbrlogserrors %}
+            <h2>Error</h2>
             <ul class="alt">
-                {% for i, log in collector.logsinvalidations %}
-                    <li class="{{ i is even ? 'odd' : 'even' }}">
-                        <div>
-                            {{ log }}<br />
-                         </div>
-                    </li>
+                {% for i, log in collector.logserrors %}
+                    {% if log is iterable %}
+                        <li class="{{ i is odd ? 'odd' : 'even' }}">
+                            {% for line in log %}
+                                <div>
+                                    {{ line }}<br />
+                                </div>
+                            {% endfor %}
+                        </li>
+                    {% else %}
+                        <li class="{{ i is odd ? 'odd' : 'even' }}">
+                            <div>
+                                {{ log }}<br />
+                             </div>
+                        </li>
+                    {% endif %}
                 {% endfor %}
             </ul>
         {% endif %}

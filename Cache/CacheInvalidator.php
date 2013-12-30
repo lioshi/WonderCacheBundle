@@ -17,8 +17,6 @@ class CacheInvalidator
     public function onFlush(OnFlushEventArgs $eventArgs)
     {
         
-// $fp = fopen("/data/www/testa/web/logInvalidatorCache.txt","w"); 
-
         $em = $eventArgs->getEntityManager();
         $uow = $em->getUnitOfWork();
 
@@ -47,39 +45,35 @@ class CacheInvalidator
 
         $WonderCache = new WonderCache($this->container);
         $MemcacheTools = new MemcacheTools($this->container);
-        $memcached = $MemcacheTools->getMemCachedByClient('response'); // invalidation of memcached's client response
+        $memcached = $MemcacheTools->getMemCachedByClient('response'); 
 
         $LinkedModelsToCachedKeys = $memcached->get($WonderCache->getLinkedEntitiesToCachedKeysFilename());
-        // $LinkedModelsToCachedKeys = '__linkedModelsToCachedKeys';
-        // $cachelogs = count($LinkedModelsToCachedKeys)."\n";
 
         foreach ($classesToDelete as $classToDelete => $idsFlush) {
 
-            $this->container->get('wonder.cache.logger')->addInvalidation('Doctrine flush Classes to delete : '.$classToDelete);
-            $this->container->get('wonder.cache.logger')->addInvalidation('Doctrine flush Ids               : '.implode(',',$idsFlush));
+            $warning = array();
+            $warning[] = 'Cache invalidation processed';
+            $warning[] = 'Doctrine just updated/deleted or inserted entity : '.$classToDelete;
+            $warning[] = 'Entity\'s ids concerned : '.implode(', ',$idsFlush);
 
             if (isset($LinkedModelsToCachedKeys[$classToDelete])){
                 foreach ($LinkedModelsToCachedKeys[$classToDelete] as $key => $entitiesIds) {
                     
-                    $this->container->get('wonder.cache.logger')->addInvalidation('Ids entities of cache            : '.implode(',',$entitiesIds));
-                    
                     if (count(array_intersect($entitiesIds, $idsFlush))){
                         $memcached->delete($key);
 
-                        $this->container->get('wonder.cache.logger')->addInvalidation('Key deleted : '.$key);
+                        $warning[] = 'Cache key deleted : '.$key. ' cause updated/deleted or inserted entity\'s id was linked ('.implode(',',$entitiesIds).')';
 
-                        // deleted entrie in 
+                        // deleted entrie in memcached saved entities linked
                         unset($LinkedModelsToCachedKeys[$classToDelete][$key]);
                         $memcached->set($WonderCache->getLinkedEntitiesToCachedKeysFilename(), $LinkedModelsToCachedKeys, 0);
                     }
                 }
             }
+            $this->container->get('wonder.cache.logger')->addWarning($warning);
+
         }
-
-// fputs($fp, $cachelogs); 
         return;
-
     }
-
     
 }

@@ -28,8 +28,12 @@ class WonderCache
 
     public function onKernelRequest(GetResponseEvent $event)
     {
-        
-        if (!$this->container->getParameter('wondercache.activated')) return; // deactivate the listenner action
+        $this->container->get('wonder.cache.logger')->addUri($event->getRequest()->getUri());
+
+        if (!$this->container->getParameter('wondercache.activated')){
+            $this->container->get('wonder.cache.logger')->addError('Wonder cache deactivated, see config.yml (set lioshi_wonder_cache.activated to true).');
+            return; // deactivate the listenner action
+        } 
 
         $cacheKeyName = $this->getResponseCacheKeyName($event->getRequest()->getUri());
                     
@@ -38,20 +42,25 @@ class WonderCache
             $response->headers->add(array('wc-response' => true ));
 
             $linkedEntities = $this->getLinkedEntitiesFromCachedKeys($cacheKeyName, 'response');
-            $this->container->get('wonder.cache.logger')->addInfo('Response retrieved from cache', $linkedEntities);
+            $this->container->get('wonder.cache.logger')->addInfo('Response retrieved from cache ['.$cacheKeyName.']', $linkedEntities);
 
             $event->setResponse($response);
             return; 
         } else {
-
-            $this->container->get('wonder.cache.logger')->addWarning('Response missing from cache');
+            $this->container->get('wonder.cache.logger')->addWarning(
+                array(
+                    'Response missing from cache',
+                    '- response cache is just saved and not yet used',
+                    'or',
+                    '- Wonder cache not run for this response'
+                    )
+                );
             return;
         }
     }
 
     public function onKernelResponse(FilterResponseEvent $event)
     {
-        
         if (!$this->container->getParameter('wondercache.activated')) return $event->getResponse(); // deactivate the listenner action
 
         $cacheKeyName = $this->getResponseCacheKeyName($event->getRequest()->getUri());
@@ -67,12 +76,17 @@ class WonderCache
                 if ($this->getLinkedEntities()){
                     $this->addLinkedEntitiesToCachedKeys($cacheKeyName, $this->getLinkedEntities(), 'response');
 
-                    $this->container->get('wonder.cache.logger')->addInfo('Response saved into cache', $this->getLinkedEntities());
+                    $this->container->get('wonder.cache.logger')->addInfo('Response saved into cache ['.$cacheKeyName.'].', $this->getLinkedEntities());
                 } else {
-                    $this->container->get('wonder.cache.logger')->addWarning('Response saved into cache without entities linked');
+                    $this->container->get('wonder.cache.logger')->addWarning('Response saved into cache without entities linked ['.$cacheKeyName.'].');
                 }
             } else {
-                $this->container->get('wonder.cache.logger')->addWarning('Response cache not specified for: '.$event->getRequest()->getUri());
+                $this->container->get('wonder.cache.logger')->addError(
+                    array(
+                        'Wonder cache not run for this response.',
+                        'If you wish please use run() fonction.'
+                        )
+                    );
             }
 
             return $response;
@@ -81,8 +95,7 @@ class WonderCache
 
     public function getResponseCacheKeyName($uri)
     {
-        return 'wc_response_cache_'.$uri;
-        // return 'response_'.md5($uri);
+        return 'wc_response_cache_'.md5($uri);
     }
 
     public function addLinkedEntities($entities){
