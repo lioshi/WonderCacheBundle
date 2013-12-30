@@ -3,7 +3,6 @@
 namespace Lioshi\WonderCacheBundle\Cache;
 
 use Doctrine\ORM\Event\OnFlushEventArgs;
- 
 use \Exception;
 
 class MemcacheTools
@@ -18,8 +17,8 @@ class MemcacheTools
      * get all keys from memecahced servers hosts in parameters
      * @return [type] [description]
      */
-    public function getMemcacheKeys($client) {
-
+    public function getMemcacheKeys($client)
+    {
         return $this->getMemCachedByClient($client)->getAllKeys();
     } 
 
@@ -28,8 +27,8 @@ class MemcacheTools
      * @param  string $client  if not specified then all client
      * @return [type]          [description]
      */
-    public function getMemCachedByClient($client) {
-
+    public function getMemCachedByClient($client)
+    {
         if ($client){
             $paramMemcachehosts = $this->container->getParameter('wondercache.memcached.'.$client);  // get parameters hosts for memcached 
             foreach ($paramMemcachehosts['hosts'] as $host) {

@@ -3,12 +3,10 @@
 namespace Lioshi\WonderCacheBundle\Cache;
 
 use Doctrine\ORM\Event\OnFlushEventArgs;
-
 use \Exception;
 
 class CacheInvalidator 
 {
-  
     public function __construct($container)
     {
         $this->container = $container;
@@ -16,7 +14,6 @@ class CacheInvalidator
 
     public function onFlush(OnFlushEventArgs $eventArgs)
     {
-        
         $em = $eventArgs->getEntityManager();
         $uow = $em->getUnitOfWork();
 
@@ -50,7 +47,6 @@ class CacheInvalidator
         $LinkedModelsToCachedKeys = $memcached->get($WonderCache->getLinkedEntitiesToCachedKeysFilename());
 
         foreach ($classesToDelete as $classToDelete => $idsFlush) {
-
             $warning = array();
             $warning[] = 'Cache invalidation processed';
             $warning[] = 'Doctrine just updated/deleted or inserted entity : '.$classToDelete;
@@ -61,10 +57,9 @@ class CacheInvalidator
                     
                     if (count(array_intersect($entitiesIds, $idsFlush))){
                         $memcached->delete($key);
-
                         $warning[] = 'Cache key deleted : '.$key. ' cause updated/deleted or inserted entity\'s id was linked ('.implode(',',$entitiesIds).')';
 
-                        // deleted entrie in memcached saved entities linked
+                        // deleted entry in memcached saved entities linked
                         unset($LinkedModelsToCachedKeys[$classToDelete][$key]);
                         $memcached->set($WonderCache->getLinkedEntitiesToCachedKeysFilename(), $LinkedModelsToCachedKeys, 0);
                     }
@@ -75,5 +70,4 @@ class CacheInvalidator
         }
         return;
     }
-    
 }

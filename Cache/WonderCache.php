@@ -3,15 +3,11 @@
 namespace Lioshi\WonderCacheBundle\Cache;
 
 use Symfony\Component\DependencyInjection\ContainerInterface;
-
 use Symfony\Component\HttpKernel\Event\GetResponseEvent;
 use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
 use Symfony\Component\HttpKernel\Event\PostResponseEvent;
-
 use Symfony\Component\HttpKernel\Exception\HttpException;
-
 use Symfony\Component\HttpFoundation\Response;
-
 use Symfony\Component\DependencyInjection\Exception\ServiceNotFoundException;
 
 class WonderCache
@@ -159,34 +155,5 @@ class WonderCache
             
         return $entities;
     }
-
-
-
-
-
-
-    // TODO: manage data's cache
-    // public function set($content, $linkedEntities, $cacheKeyName = false, $client = false,  $ttl = 0){
-    //     if ($cacheKeyName && !$client){ // object cache
-    //         $this->container->get('memcache.'.$this->objectClient)->set($cacheKeyName, $content, $ttl);
-    //         //  manage  $linkedEntities 
-    //     } elseif (!$content && !$cacheKeyName && !$client) { // response cache
-    //         // save linkedEntities
-    //         $this->addLinkedEntities($linkedEntities);
-    //         // and cache is set with $this->onKernelResponse launch by event kernel.terminate
-    //     } elseif ($cacheKeyName && $client) { // manual cache
-    //         $this->container->get('memcache.'.$client)->set($cacheKeyName, $content, $ttl);
-    //         // manage $linkedEntities
-    //     }
-    // }
-    // public function get($cacheKeyName, $client = false){
-    //     if ($cacheKeyName && !$client){ // object cache
-    //         $this->container->get('memcache.'.$this->objectClient)->get($cacheKeyName);
-    //     } elseif (!$cacheKeyName && !$client) { // response cache
-    //         // no get for this cache, event kernel.terminate manage this
-    //     } elseif ($cacheKeyName && $client) { // manual cache
-    //         $this->container->get('memcache.'.$client)->get($cacheKeyName);
-    //     }
-    // }
 
 }
