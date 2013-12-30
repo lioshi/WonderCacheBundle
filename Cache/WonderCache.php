@@ -42,7 +42,7 @@ class WonderCache
             $response->headers->add(array('wc-response' => true ));
 
             $linkedEntities = $this->getLinkedEntitiesFromCachedKeys($cacheKeyName, 'response');
-            $this->container->get('wonder.cache.logger')->addInfo('Response retrieved from cache ['.$cacheKeyName.']', $linkedEntities);
+            $this->container->get('wonder.cache.logger')->addInfo('Response retrieved from cache [cache key: '.$cacheKeyName.']', $linkedEntities);
 
             $event->setResponse($response);
             return; 
@@ -76,9 +76,9 @@ class WonderCache
                 if ($this->getLinkedEntities()){
                     $this->addLinkedEntitiesToCachedKeys($cacheKeyName, $this->getLinkedEntities(), 'response');
 
-                    $this->container->get('wonder.cache.logger')->addInfo('Response saved into cache ['.$cacheKeyName.'].', $this->getLinkedEntities());
+                    $this->container->get('wonder.cache.logger')->addInfo('Response saved into cache [cache key: '.$cacheKeyName.'].', $this->getLinkedEntities());
                 } else {
-                    $this->container->get('wonder.cache.logger')->addWarning('Response saved into cache without entities linked ['.$cacheKeyName.'].');
+                    $this->container->get('wonder.cache.logger')->addWarning('Response saved into cache without entities linked [cache key: '.$cacheKeyName.'].');
                 }
             } else {
                 $this->container->get('wonder.cache.logger')->addError(
