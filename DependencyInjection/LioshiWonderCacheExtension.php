@@ -36,8 +36,23 @@ class LioshiWonderCacheExtension extends Extension
         }
 
         if (isset($config['memcached_response'])) {
-            $this->newMemcachedClient('response', $config['memcached_response'], $container);
+            // $this->newMemcachedClient('response', $config['memcached_response'], $container);
             $container->setParameter('wondercache.memcached.response', $config['memcached_response']);
+        }
+
+        // Add servers to the parameters for declaration of memcached client in services.yml
+        $servers = array();
+        foreach ($config['memcached_response']['hosts'] as $host) {
+            $servers[] = array(
+                'dsn' => $host['dsn'],
+                'port' => $host['port'],
+                'weight' => $host['weight']
+            );
+        }
+        $container->setParameter('memcached.servers', $servers);  
+
+        if (isset($config['memcached_response']['options'])) {
+            $container->setParameter('memcached.override_options', $config['memcached_response']['options']);
         }
     }
 
@@ -57,7 +72,8 @@ class LioshiWonderCacheExtension extends Extension
             throw new \LogicException('Memcached extension is not loaded! To configure memcached clients it MUST be loaded!');
         }
 
-        $memcached = new Definition('Lioshi\WonderCacheBundle\Cache\Memcache');
+        // $memcached = new Definition('Lioshi\WonderCacheBundle\Cache\Memcache');
+        $memcached = new \Memcached;
 
         // Check if it has to be persistent
         if (isset($config['persistent_id'])) {
@@ -73,7 +89,8 @@ class LioshiWonderCacheExtension extends Extension
                 $host['weight']
             );
         }
-        $memcached->addMethodCall('addServers', array($servers));
+        // $memcached->addMethodCall('addServers', array($servers));
+        $memcached->addServers($servers);
 
         // Get default memcached options
         $options = $container->getParameter('memcache.default_options');
@@ -97,7 +114,8 @@ class LioshiWonderCacheExtension extends Extension
                     if ($config['options'][$key]!=$value) {
                         // not default, add method call and update options
                         $constant = 'Memcached::OPT_'.strtoupper($key);
-                        $memcached->addMethodCall('setOption', array(constant($constant), $newValue));
+                        // $memcached->addMethodCall('setOption', array(constant($constant), $newValue));
+                        $memcached->setOption(constant($constant), $newValue);
                         $options[$key] = $newValue;
                         // add prefix in container param
                         if ($key == 'prefix_key')
@@ -115,7 +133,10 @@ class LioshiWonderCacheExtension extends Extension
 
         // Add the service to the container
         $serviceName = sprintf('memcached.%s', $name);
-        $container->setDefinition($serviceName, $memcached);
+        // $container->setDefinition($serviceName, $memcached);
+        $container->set($serviceName, $memcached);
+
+        // $container->compile();
     }
 
 }

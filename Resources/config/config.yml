@@ -1,5 +1,5 @@
 parameters:
-    memcache.default_options:
+    memcached.default_options:
         compression: false
         serializer: json
         prefix_key: ""
