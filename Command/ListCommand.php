@@ -48,11 +48,11 @@ class ListCommand extends ContainerAwareCommand
             $i=0;
             $keys = array();
 
-            // foreach ($MemcacheTools->getMemcacheKeys($client) as $key) {
-            // $memcached = new \Memcached;
-            // $memcached->addServers(array(array('localhost', 11211)));
-var_dump($memcached->getAllKeysx());
-            foreach ($memcached->getAllKeysx() as $key) {
+            foreach ($MemcacheTools->getMemcacheKeys($client) as $key) {
+//             // $memcached = new \Memcached;
+//             // $memcached->addServers(array(array('localhost', 11211)));
+// var_dump($memcached->getAllKeysx());
+//             foreach ($memcached->getAllKeysx() as $key) {
                 $i++;
                 $state = ($memcached->get($key))?'':'<error> empty </error>';
                 $output->writeln('<info>'.$i.'</info> <comment>'.$key.'</comment> '.$state);
