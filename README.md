@@ -1,7 +1,3 @@
-WARNING: __UNDER CONSTRUCTION__
---
-
-
 WonderCacheBundle 
 =================
 A wonder cache bundle for symfony 2. 
