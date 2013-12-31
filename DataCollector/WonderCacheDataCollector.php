@@ -6,6 +6,10 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\DataCollector\DataCollector;
  
+/**
+ * Class to get data from collector
+ * 
+ */
 class WonderCacheDataCollector extends DataCollector 
 {
     private $logger;
@@ -79,7 +83,4 @@ class WonderCacheDataCollector extends DataCollector
         return base64_encode(file_get_contents(dirname(__FILE__).'/../Resources/images/icon_'.$type.'.png'));
     }
     
-
-
-
 }

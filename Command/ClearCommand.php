@@ -9,18 +9,13 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\DependencyInjection\Exception\ServiceNotFoundException;
 
-
 /**
  * Provides a command-line interface for flushing memcached content
+ * 
  */
 class ClearCommand extends ContainerAwareCommand
 {
 
-   /**
-    * Configure the CLI task
-    *
-    * @return void
-    */
    protected function configure()
    {
       $this
@@ -39,15 +34,12 @@ class ClearCommand extends ContainerAwareCommand
     */
    protected function execute(InputInterface $input, OutputInterface $output)
    {
-        $client = 'response';
         try {
-            $memcached = $this->getContainer()->get('memcached.'.$client);
+            $memcached = $this->getContainer()->get('memcached.response');
+            $output->writeln($memcached->flush()?'<info> Delete all cache OK </info>':'<error> Error, cache not deleted </error>');
 
-var_dump($memcached->getAllKeys());
-
-            $output->writeln($memcached->flush()?'<info> Delete all cache OK </info>':'<error> ERROR </error>');
         } catch (\Exception $e) {
-            $output->writeln($e."<error> Memcached client '$client' is not found</error>");
+            $output->writeln($e."<error> Memcached client response is not found</error>");
         }
    }
 

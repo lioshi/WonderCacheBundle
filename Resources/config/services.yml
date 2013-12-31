@@ -1,10 +1,11 @@
 parameters:
     wondercache.data_collector.template: "LioshiWonderCacheBundle:Collector:wondercache"
 
-    # memcached.servers:
-    #     - { host: localhost, port: 11211 }
-
 services:
+    memcached.response:
+        class: Lioshi\WonderCacheBundle\Cache\Memcached
+        arguments: [ %memcached.servers%, %memcached.default_options%, %memcached.override_options% ]
+
     wonder.cache.invalidator:
         class: Lioshi\WonderCacheBundle\Cache\CacheInvalidator
         public: false
@@ -28,6 +29,4 @@ services:
         tags: 
             - { name: data_collector, template: %wondercache.data_collector.template%, id: "wondercache" }
 
-    memcached.response:
-        class: Lioshi\WonderCacheBundle\Cache\Memcached
-        arguments: [ %memcached.servers%, %memcached.default_options%, %memcached.override_options% ]
+

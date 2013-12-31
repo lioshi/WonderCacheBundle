@@ -10,16 +10,12 @@ use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\DependencyInjection\Exception\ServiceNotFoundException;
 
 /**
- * Provides a command-line interface to list memcache content
+ * Provides a command-line interface to list memcache contents
+ * 
  */
 class ListCommand extends ContainerAwareCommand
 {
 
-   /**
-    * Configure the CLI task
-    *
-    * @return void
-    */
    protected function configure()
    {
       $this
@@ -36,38 +32,45 @@ class ListCommand extends ContainerAwareCommand
     *
     * @return void
     */
-   protected function execute(InputInterface $input, OutputInterface $output)
-   {
-        try {
-            $memcached = $this->getContainer()->get('memcached.response');
+  protected function execute(InputInterface $input, OutputInterface $output)
+  {
+    try {
+      $memcached = $this->getContainer()->get('memcached.response');
 
-            $i=0;
-            $keys = array();
+      $i=0;
+      $keys = array();
 
-            foreach ($memcached->getAllKeys() as $key => $displayKey) {
-                $i++;
-                $state = ($displayKey['empty'])?'<error> empty </error>':'';
-                $output->writeln('<info>'.$i.'</info> <comment>'.$displayKey['name'].'</comment> '.$state);
-                $keys[$i] = $key;
-            }
+      foreach ($memcached->getAllKeys() as $key => $displayKey) {
+          $i++;
+          $state = ($displayKey['empty'])?'<error> empty </error>':'';
+          $output->writeln('<info>'.$i.'</info> <comment>'.$displayKey['name'].'</comment> '.$state);
+          $keys[$i] = $key;
+      }
 
-            if (!$i){
-              $output->writeln('<info>No cache</info>');
-            } else {
-              // display cache content?
-              print_r($this->getCacheContent($keys, $memcached, $output));
-            }
+      if (!$i){
+        $output->writeln('<info>No cache</info>');
+      } else {
+        // display cache content?
+        print_r($this->getCacheContent($keys, $memcached, $output));
+      }
 
-        } catch (ServiceNotFoundException $e) {
+    } catch (ServiceNotFoundException $e) {
             $output->writeln("<error> Service memcached.response is not found</error>");
-        }
-   }
+    }
+  }
 
+   /**
+    * Get a displayable view of a content cache
+    * @param  string $keys      
+    * @param  Memcached $memcached 
+    * @param  OutputInterface $output    
+    * @return string    Content of cache's key
+    */
   protected function getCacheContent($keys, $memcached, $output)
   {
     $key = $this->getHelper('dialog')->askAndValidate(
       $output,
-      '<info> Display which cache key content? (put number) </info>',
+      '<info> Display which cache key content? (write identifier number) </info>',
       function($key)
         {
           return $key;
@@ -75,7 +78,7 @@ class ListCommand extends ContainerAwareCommand
     );
 
     if (!array_key_exists($key, $keys)) {
-      throw new \Exception('number '.$key.' not exists');
+      throw new \Exception('Identifier number '.$key.' not exists');
     }
 
     return $memcached->get($keys[$key]);

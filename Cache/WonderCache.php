@@ -22,6 +22,31 @@ class WonderCache
         $this->used = false;
     }
 
+    /**
+     * Get the name of response's cache's key calculated with uri of response
+     * 
+     * @return string 
+     */
+    public function getResponseCacheKeyName($uri)
+    {
+        return 'wc_response_cache_'.md5($uri);
+    }
+
+    /**
+     * Get the name of cache's key which store the linked entities and the related cache's keys
+     * 
+     * @return string 
+     */
+    public function getLinkedEntitiesToCachedKeysFilename() {
+        return 'wc_linked_entities';
+    }
+
+    /**
+     * Called by kernel.request event to set response from cache if exists
+     * 
+     * @param  GetResponseEvent $event 
+     * @return null with updated response if cache exists                 
+     */
     public function onKernelRequest(GetResponseEvent $event)
     {
         $this->container->get('wonder.cache.logger')->addUri($event->getRequest()->getUri());
@@ -37,7 +62,7 @@ class WonderCache
             $response = $this->container->get('memcached.response')->get($cacheKeyName);
             $response->headers->add(array('wc-response' => true ));
 
-            $linkedEntities = $this->getLinkedEntitiesFromCachedKeys($cacheKeyName, 'response');
+            $linkedEntities = $this->getLinkedEntitiesFromCachedKeys($cacheKeyName);
             $this->container->get('wonder.cache.logger')->addInfo('Response retrieved from cache [cache key: '.$cacheKeyName.']', $linkedEntities);
 
             $event->setResponse($response);
@@ -55,6 +80,12 @@ class WonderCache
         }
     }
 
+    /**
+     * Called by kernel.response to save response's cache if needed
+     * 
+     * @param  FilterResponseEvent $event 
+     * @return null if cache allready exists or response after saved it if no cache exists                      
+     */
     public function onKernelResponse(FilterResponseEvent $event)
     {
         if (!$this->container->getParameter('wondercache.activated')) return $event->getResponse(); // deactivate the listenner action
@@ -70,7 +101,7 @@ class WonderCache
             if ($this->getUsed()){
                 $this->container->get('memcached.response')->set($cacheKeyName, $response, 0);
                 if ($this->getLinkedEntities()){
-                    $this->addLinkedEntitiesToCachedKeys($cacheKeyName, $this->getLinkedEntities(), 'response');
+                    $this->addLinkedEntitiesToCachedKeys($cacheKeyName, $this->getLinkedEntities());
 
                     $this->container->get('wonder.cache.logger')->addInfo('Response saved into cache [cache key: '.$cacheKeyName.'].', $this->getLinkedEntities());
                 } else {
@@ -89,11 +120,11 @@ class WonderCache
         }
     }
 
-    public function getResponseCacheKeyName($uri)
-    {
-        return 'wc_response_cache_'.md5($uri);
-    }
-
+    /**
+     * Add new linked entities
+     * 
+     * @param array $entities to merge with existant entities
+     */
     public function addLinkedEntities($entities){
         $this->linkedEntities = array_merge($this->linkedEntities, $entities);
         return $this;
@@ -112,13 +143,15 @@ class WonderCache
         return $this->used;
     }
 
-    public function getLinkedEntitiesToCachedKeysFilename() {
-        return 'wc_linked_entities';
-    }
+    /**
+     * Add linked entities to existant cache's key which stores relation between cache and entities
+     * 
+     * @param string $key      the cache's key
+     * @param array $entities  the entities linked
+     */
+    public function addLinkedEntitiesToCachedKeys($key, $entities){
 
-    public function addLinkedEntitiesToCachedKeys($key, $entities, $client){
-
-        if (is_array($entities) && count($entities) && $client){
+        if (is_array($entities) && count($entities)){
         
             $linkedEntitiesToCachedKeysFile = $this->getLinkedEntitiesToCachedKeysFilename();    
 
@@ -127,22 +160,28 @@ class WonderCache
                 $entities[$linkedModel][$key] = $entitiesIds;
             }
 
-            if ($this->container->get('memcached.'.$client)->get($linkedEntitiesToCachedKeysFile)){
-                $linkedEntitiesToCachedKeysFileContent = $this->container->get('memcached.'.$client)->get($linkedEntitiesToCachedKeysFile);
+            if ($this->container->get('memcached.response')->get($linkedEntitiesToCachedKeysFile)){
+                $linkedEntitiesToCachedKeysFileContent = $this->container->get('memcached.response')->get($linkedEntitiesToCachedKeysFile);
                 $entities = array_merge_recursive($linkedEntitiesToCachedKeysFileContent,$entities);
             } 
             
-            $this->container->get('memcached.'.$client)->set($linkedEntitiesToCachedKeysFile, $entities,0); 
+            $this->container->get('memcached.response')->set($linkedEntitiesToCachedKeysFile, $entities,0); 
         }
     }
 
-    public function getLinkedEntitiesFromCachedKeys($key, $client){
+    /**
+     * Get linked entities for a cache's key
+     * 
+     * @param  string $key     the cache's key
+     * @return array $entities linked to the cache's key
+     */
+    public function getLinkedEntitiesFromCachedKeys($key){
 
         $entities = array();
         $linkedEntitiesToCachedKeysFile = $this->getLinkedEntitiesToCachedKeysFilename();    
 
-        if ($this->container->get('memcached.'.$client)->get($linkedEntitiesToCachedKeysFile)){
-            $linkedEntitiesToCachedKeysFileContent = $this->container->get('memcached.'.$client)->get($linkedEntitiesToCachedKeysFile);
+        if ($this->container->get('memcached.response')->get($linkedEntitiesToCachedKeysFile)){
+            $linkedEntitiesToCachedKeysFileContent = $this->container->get('memcached.response')->get($linkedEntitiesToCachedKeysFile);
                 
             foreach ($linkedEntitiesToCachedKeysFileContent as $entity => $cacheInfos) {
                 foreach ($cacheInfos as $cacheKey => $ids) {

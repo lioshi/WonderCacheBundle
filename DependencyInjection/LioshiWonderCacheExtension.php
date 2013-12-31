@@ -29,15 +29,11 @@ class LioshiWonderCacheExtension extends Extension
         $loader->load('config.yml');
         $loader->load('services.yml');
 
+        // Parameter used in services launched by kernel event
         if (isset($config['activated'])) {
             $container->setParameter('wondercache.activated', $config['activated']);
         } else {
             $container->setParameter('wondercache.activated', false);
-        }
-
-        if (isset($config['memcached_response'])) {
-            // $this->newMemcachedClient('response', $config['memcached_response'], $container);
-            $container->setParameter('wondercache.memcached.response', $config['memcached_response']);
         }
 
         // Add servers to the parameters for declaration of memcached client in services.yml
@@ -51,92 +47,14 @@ class LioshiWonderCacheExtension extends Extension
         }
         $container->setParameter('memcached.servers', $servers);  
 
+        // Add override options to the parameters
+        // Default options are in memcached.default_options in config.yml
         if (isset($config['memcached_response']['options'])) {
             $container->setParameter('memcached.override_options', $config['memcached_response']['options']);
+        } else {
+            $container->setParameter('memcached.override_options', array());
         }
     }
 
-    /**
-     * Creates a new Memcached definition
-     *
-     * @param string           $name      Client name
-     * @param array            $config    Client configuration
-     * @param ContainerBuilder $container Service container
-     *
-     * @throws \LogicException
-     */
-    private function newMemcachedClient($name, array $config, ContainerBuilder $container)
-    {
-        // Check if the Memcached extension is loaded
-        if (!extension_loaded('memcached')) {
-            throw new \LogicException('Memcached extension is not loaded! To configure memcached clients it MUST be loaded!');
-        }
-
-        // $memcached = new Definition('Lioshi\WonderCacheBundle\Cache\Memcache');
-        $memcached = new \Memcached;
-
-        // Check if it has to be persistent
-        if (isset($config['persistent_id'])) {
-            $memcached->addArgument($config['persistent_id']);
-        }
-
-        // Add servers to the memcached client
-        $servers = array();
-        foreach ($config['hosts'] as $host) {
-            $servers[] = array(
-                $host['dsn'],
-                $host['port'],
-                $host['weight']
-            );
-        }
-        // $memcached->addMethodCall('addServers', array($servers));
-        $memcached->addServers($servers);
-
-        // Get default memcached options
-        $options = $container->getParameter('memcache.default_options');
-
-        // Add overriden options
-        if (isset($config['options'])) {
-            foreach ($options as $key => $value) {
-                if (isset($config['options'][$key])) {
-                    if ($key == 'serializer') {
-                        // serializer option needs to be supported and is a constant
-                        if ($value != 'php' && !constant('Memcached::HAVE_' . strtoupper($value))) {
-                            throw new \LogicException("Invalid serializer specified for Memcached: $value");
-                        }
-                        $newValue = constant('Memcached::SERIALIZER_' . strtoupper($value));
-                    } elseif ($key == 'distribution') {
-                        // distribution is defined as a constant
-                        $newValue = constant('Memcached::DISTRIBUTION_' . strtoupper($value));
-                    } else {
-                        $newValue = $config['options'][$key];
-                    }
-                    if ($config['options'][$key]!=$value) {
-                        // not default, add method call and update options
-                        $constant = 'Memcached::OPT_'.strtoupper($key);
-                        // $memcached->addMethodCall('setOption', array(constant($constant), $newValue));
-                        $memcached->setOption(constant($constant), $newValue);
-                        $options[$key] = $newValue;
-                        // add prefix in container param
-                        if ($key == 'prefix_key')
-                            $container->setParameter('wondercache.memcached.'.$name.'.prefix', $config['options'][$key]);
-                    }
-
-                }
-            }
-        }
-
-        // Make sure that config values are human readable
-        foreach ($options as $key => $value) {
-            $options[$key] = var_export($value, true);
-        }
-
-        // Add the service to the container
-        $serviceName = sprintf('memcached.%s', $name);
-        // $container->setDefinition($serviceName, $memcached);
-        $container->set($serviceName, $memcached);
-
-        // $container->compile();
-    }
 
 }

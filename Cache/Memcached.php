@@ -1,6 +1,10 @@
 <?php
 namespace Lioshi\WonderCacheBundle\Cache;
 
+/**
+ * Class used for extends Memcached
+ * 
+ */
 class Memcached extends \Memcached  
 {  
     private $prefix;
@@ -28,7 +32,7 @@ class Memcached extends \Memcached
         } 
         $this->addServers($servers); 
 
-        // set options
+        // set options ovverride in config.yml
         if (isset($overrideoptions)) {
             foreach ($options as $key => $value) {
                 if (isset($overrideoptions[$key])) {
@@ -51,12 +55,16 @@ class Memcached extends \Memcached
 
                         if ($key == 'prefix_key') $this->prefix = $newValue;
                     }
-
                 }
             }
         }
     }  
 
+    /**
+     * Get all keys on servers, display name with prefix but key doesn't need prefix to get/delete it, and then name store in key of return array
+     * 
+     * @return array formatted to store cache's key associated to their name (with prefix if configurated) and a boolean empty
+     */
     public function getAllKeys(){
         $allKeys = array();
         foreach (parent::getAllKeys() as $key) {

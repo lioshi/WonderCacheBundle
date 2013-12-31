@@ -1,6 +1,10 @@
 <?php
 namespace Lioshi\WonderCacheBundle\Logger;
  
+/**
+ * Class to logg infos, errors and warnings
+ * 
+ */
 class WonderCacheLogger 
 {
     private $logs = array(
