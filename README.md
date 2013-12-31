@@ -121,7 +121,7 @@ Exemple's code for a controller:
 
 ![screenshot](https://raw.github.com/lioshi/WonderCacheBundle/master/Resources/images/wondercache_toolbar_infos.png)
 
->... you can see more informations about how **WonderCache saves** your time:
+>... you can see more informations about how **WonderCache** save your time:
 
 ![screenshot](https://raw.github.com/lioshi/WonderCacheBundle/master/Resources/images/wondercache_profiler_infos.png)
 
