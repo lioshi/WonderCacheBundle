@@ -1,30 +1,23 @@
 ![screenshot](https://raw.github.com/lioshi/WonderCacheBundle/master/Resources/images/icon_.png) WonderCacheBundle 
 =================
-A wonder cache bundle for symfony 2.  
-A full response cache with automatic invalidation via Doctrine event.
+A wonder cache bundle for symfony 2. A full response cache with automatic invalidation via Doctrine event.
 
+If you want a simple system to implement cache.
+If you do not want to waste time setting up a cache invalidation system.
+Then you'll love Wonder cache.
+
+That's what Wonder cache performs:
 ![screenshot](https://raw.github.com/lioshi/WonderCacheBundle/master/Resources/images/wondercache_workflow.png)
 
----
+Wonder cache is there at request, and bypasses all framework. As a proxy. 
+**But Wonder Cache knows when invalidate its cache.**
 
 ## Requirements
-
-- PHP 5.3.x or 5.4.x
+- PHP 5.3.x or more
 - php5-memcached 2.x
 
 ## Installation
-
-To install WonderCacheBundle with Composer just add the following to your 'composer.json' file:
-
-    "repositories": [
-        {
-            "type": "vcs",
-            "url": "https://github.com/lioshi/WonderCacheBundle.git"
-        }
-    ],
-NB: _not yet in packagist_
-
-(...)
+To install WonderCacheBundle with Composer just add the following to your _composer.json_ file:
 
     {
         require: {
@@ -37,7 +30,7 @@ The next thing you should do is install the bundle by executing the following co
 
     php composer.phar update lioshi/wonder-cache-bundle
 
-Finally, add the bundle to the registerBundles function of the AppKernel class in the 'app/AppKernel.php' file:
+Finally, add the bundle to the registerBundles function of the AppKernel class in the _app/AppKernel.php_ file:
 
     public function registerBundles()
     {
@@ -47,7 +40,7 @@ Finally, add the bundle to the registerBundles function of the AppKernel class i
             ...
         );
 
-Configure the bundle by adding the following to app/config/config.yml':
+Configure the bundle by adding the following to _app/config/config.yml_:
 
 ```yml
     lioshi_wonder_cache:
@@ -57,8 +50,7 @@ Configure the bundle by adding the following to app/config/config.yml':
                 - { dsn: localhost, port: 11211 }
 ```
 
-Install the following dependencies:
-
+### Dependencies
 (in Debian based systems)
     
     apt-get install memcached php5-memcached
@@ -69,11 +61,10 @@ Install the following dependencies:
 
 Do not forget to restart you web server after adding the Memcache module. 
 
-
 ## Commands
-The ```wondercache:clear``` command deletes all memcached's items and ```wondercache:list``` command can list all memcached's keys and can display content of a key.
+The ```wondercache:clear``` command delete all cached items and ```wondercache:list``` command can list all cache's keys and can display content of a choosen key.
 
-## Full configuration (config.yml)
+## Full configuration for _app/config/config.yml_
 ```yml
     lioshi_wonder_cache:
         activated: true
@@ -104,13 +95,13 @@ The ```wondercache:clear``` command deletes all memcached's items and ```wonderc
 ```
 
 ## Usage
-Into a controller you can run() wonderCache and specified optionnaly entities which arer linked to the controller response.
+Into a controller you can run() wonderCache and specified optionnaly entities which are linked to the controller response.
 The following exemple means that the controller's response depends on (or is linked to):
-- 3 packs
-- 2 exports
+- 3 packs with ids 1, 65 and 988
+- 2 exports with ids 65 and 22
 - all cars
 
-Exemple's code for a controller
+Exemple's code for a controller:
 
         $this->container->get('wonder.cache')
             ->run()
@@ -122,16 +113,21 @@ Exemple's code for a controller
             )
         );
 
+**No more than that**
+
 ## Profiler's informations
+With symfony toolbar you can follow how Wonder cache performs. 
+If there's some error or warning:
 ![screenshot](https://raw.github.com/lioshi/WonderCacheBundle/master/Resources/images/wondercache_toolbar_errors.png)
 
+If all is good...
 ![screenshot](https://raw.github.com/lioshi/WonderCacheBundle/master/Resources/images/wondercache_toolbar_infos.png)
 
+... you can see more informations about how Wonder cache saves your time:
 ![screenshot](https://raw.github.com/lioshi/WonderCacheBundle/master/Resources/images/wondercache_profiler_infos.png)
 
 ## Credits
 Inspired by https://github.com/LeaseWeb/LswMemcacheBundle:
 - DependencyInjection/Configuration.php
-- DependencyInjection/LswMemcacheExtension.php
 - Command/ClearCommand.php
 
