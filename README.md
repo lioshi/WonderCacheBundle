@@ -1,16 +1,14 @@
 ![screenshot](https://raw.github.com/lioshi/WonderCacheBundle/master/Resources/images/icon_.png) WonderCacheBundle 
 =================
-A **WonderCache** bundle for symfony 2. A full response cache with automatic invalidation via Doctrine event.
+A full response cache with automatic invalidation via Doctrine events:
+- just one service's call to manage cache of an action
+- no wasted time setting up a cache invalidation system
 
-If you want a simple system to implement cache.
-If you do not want to waste time setting up a cache invalidation system.
-Then you'll love **WonderCache**.
-
-That's what **WonderCache** performs:
+## How works **WonderCache**
 ![screenshot](https://raw.github.com/lioshi/WonderCacheBundle/master/Resources/images/wondercache_workflow.png)
 
 **WonderCache** is there at request and bypasses all framework. As a proxy. 
-**But WonderCache knows when invalidate its cache.**
+But WonderCache knows when invalidate its cache.
 
 ## Requirements
 - PHP 5.3.x or more
@@ -64,7 +62,7 @@ Do not forget to restart you web server after adding the Memcache module.
 ## Commands
 The ```wondercache:clear``` command delete all cached items and ```wondercache:list``` command can list all cache's keys and can display content of a choosen key.
 
-## Full configuration for _app/config/config.yml_
+## Full configuration
 ```yml
     lioshi_wonder_cache:
         activated: true
@@ -113,17 +111,18 @@ Exemple's code for a controller:
             )
         );
 
-**No more than that**
-
 ## Profiler's informations
-With symfony toolbar you can follow how **WonderCache** performs. 
-If there's some error or warning:
+> With symfony toolbar you can follow how **WonderCache** performs. 
+> If there's some error or warning:
+
 ![screenshot](https://raw.github.com/lioshi/WonderCacheBundle/master/Resources/images/wondercache_toolbar_errors.png)
 
-If all is good...
+>If all is good...
+
 ![screenshot](https://raw.github.com/lioshi/WonderCacheBundle/master/Resources/images/wondercache_toolbar_infos.png)
 
-... you can see more informations about how **WonderCache saves** your time:
+>... you can see more informations about how **WonderCache saves** your time:
+
 ![screenshot](https://raw.github.com/lioshi/WonderCacheBundle/master/Resources/images/wondercache_profiler_infos.png)
 
 ## Credits
