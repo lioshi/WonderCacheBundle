@@ -1,4 +1,4 @@
-WonderCacheBundle 
+![screenshot](https://raw.github.com/lioshi/WonderCacheBundle/master/Resources/images/icon_.png) WonderCacheBundle 
 =================
 A wonder cache bundle for symfony 2.  
 A full response cache with automatic invalidation via Doctrine event.
@@ -121,6 +121,13 @@ Exemple's code for a controller
                 'Me\MyBundle\Entity\Cars' => array()
             )
         );
+
+## Profiler's informations
+![screenshot](https://raw.github.com/lioshi/WonderCacheBundle/master/Resources/images/wondercache_toolbar_errors.png)
+
+![screenshot](https://raw.github.com/lioshi/WonderCacheBundle/master/Resources/images/wondercache_toolbar_infos.png)
+
+![screenshot](https://raw.github.com/lioshi/WonderCacheBundle/master/Resources/images/wondercache_profiler_infos.png)
 
 ## Credits
 Inspired by https://github.com/LeaseWeb/LswMemcacheBundle:
