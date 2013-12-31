@@ -49,11 +49,11 @@ Configure the bundle by adding the following to _app/config/config.yml_:
 ```
 
 ### Dependencies
-(in Debian based systems)
+>in Debian based systems
     
     apt-get install memcached php5-memcached
 
-(in Centos based systems)
+>in Centos based systems
    
     yum install php-pecl-memcached 
 
