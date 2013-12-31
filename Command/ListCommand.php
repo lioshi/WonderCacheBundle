@@ -9,8 +9,6 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\DependencyInjection\Exception\ServiceNotFoundException;
 
-use Lioshi\WonderCacheBundle\Cache\MemcacheTools as MemcacheTools;
-
 /**
  * Provides a command-line interface to list memcache content
  */
@@ -40,22 +38,16 @@ class ListCommand extends ContainerAwareCommand
     */
    protected function execute(InputInterface $input, OutputInterface $output)
    {
-        $client = 'response';
         try {
-            $memcached = $this->getContainer()->get('memcached.'.$client);
-            
-            $MemcacheTools = new MemcacheTools($this->getContainer());
+            $memcached = $this->getContainer()->get('memcached.response');
+
             $i=0;
             $keys = array();
 
-            // foreach ($MemcacheTools->getMemcacheKeys($client) as $key) {
-//             // $memcached = new \Memcached;
-//             // $memcached->addServers(array(array('localhost', 11211)));
-// var_dump($memcached->getAllKeys());
-            foreach ($memcached->getAllKeys() as $key) {
+            foreach ($memcached->getAllKeys() as $key => $displayKey) {
                 $i++;
-                $state = ($memcached->getByKey($key))?'':'<error> empty </error>';
-                $output->writeln('<info>'.$i.'</info> <comment>'.$key.'</comment> '.$state);
+                $state = ($displayKey['empty'])?'<error> empty </error>':'';
+                $output->writeln('<info>'.$i.'</info> <comment>'.$displayKey['name'].'</comment> '.$state);
                 $keys[$i] = $key;
             }
 
@@ -67,7 +59,7 @@ class ListCommand extends ContainerAwareCommand
             }
 
         } catch (ServiceNotFoundException $e) {
-            $output->writeln("<error>client '$client' is not found</error>");
+            $output->writeln("<error> Service memcached.response is not found</error>");
         }
    }
 
@@ -75,7 +67,7 @@ class ListCommand extends ContainerAwareCommand
   {
     $key = $this->getHelper('dialog')->askAndValidate(
       $output,
-      '<info>Display which cache key content? (put number) </info>',
+      '<info> Display which cache key content? (put number) </info>',
       function($key)
         {
           return $key;

@@ -5,6 +5,11 @@ namespace Lioshi\WonderCacheBundle\Cache;
 use Doctrine\ORM\Event\OnFlushEventArgs;
 use \Exception;
 
+/**
+ * Class used to invalidate cache for responses which have entites linked.
+ * When an entity is updated, inserted or deleted the onFlush function get the response's caches linked and delete.
+ * 
+ */
 class CacheInvalidator 
 {
     public function __construct($container)
@@ -41,8 +46,7 @@ class CacheInvalidator
         }
 
         $WonderCache = new WonderCache($this->container);
-        $MemcacheTools = new MemcacheTools($this->container);
-        $memcached = $MemcacheTools->getMemCachedByClient('response'); 
+        $memcached = $this->container->get('memcached.response'); 
 
         $LinkedModelsToCachedKeys = $memcached->get($WonderCache->getLinkedEntitiesToCachedKeysFilename());
 
@@ -50,14 +54,14 @@ class CacheInvalidator
             $warning = array();
             $warning[] = 'Cache invalidation processed';
             $warning[] = 'Doctrine just updated/deleted or inserted entity : '.$classToDelete;
-            $warning[] = 'Entity\'s ids concerned : '.implode(', ',$idsFlush);
+            $warning[] = $classToDelete.'\'s ids concerned : '.implode(', ',$idsFlush);
 
             if (isset($LinkedModelsToCachedKeys[$classToDelete])){
                 foreach ($LinkedModelsToCachedKeys[$classToDelete] as $key => $entitiesIds) {
                     
                     if (count(array_intersect($entitiesIds, $idsFlush))){
                         $memcached->delete($key);
-                        $warning[] = 'Cache key deleted : '.$key. ' cause updated/deleted or inserted entity\'s id was linked ('.implode(',',$entitiesIds).')';
+                        $warning[] = 'Cache key deleted : '.$key. ' cause one or more '.$classToDelete.'\'s id was linked ('.implode(',',array_intersect($entitiesIds, $idsFlush)).')';
 
                         // deleted entry in memcached saved entities linked
                         unset($LinkedModelsToCachedKeys[$classToDelete][$key]);

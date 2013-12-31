@@ -57,8 +57,15 @@ class Memcached extends \Memcached
         }
     }  
 
-    // public function get($key){
-    //     return str_replace($this->prefix, '', $key);
-    //     return parent::get(str_replace($this->prefix, '', $key));
-    // }
+    public function getAllKeys(){
+        $allKeys = array();
+        foreach (parent::getAllKeys() as $key) {
+            $allKeys[str_replace($this->prefix, '', $key)] = array(
+                    'empty' => !$this->get(str_replace($this->prefix, '', $key)),
+                    'name'  => $key
+                );
+        }
+
+        return $allKeys;
+    }
 } 
