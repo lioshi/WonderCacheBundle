@@ -1,15 +1,15 @@
 ![screenshot](https://raw.github.com/lioshi/WonderCacheBundle/master/Resources/images/icon_.png) WonderCacheBundle 
 =================
-A WonderCache bundle for symfony 2. A full response cache with automatic invalidation via Doctrine event.
+A **WonderCache** bundle for symfony 2. A full response cache with automatic invalidation via Doctrine event.
 
 If you want a simple system to implement cache.
 If you do not want to waste time setting up a cache invalidation system.
-Then you'll love WonderCache.
+Then you'll love **WonderCache**.
 
-That's what WonderCache performs:
+That's what **WonderCache** performs:
 ![screenshot](https://raw.github.com/lioshi/WonderCacheBundle/master/Resources/images/wondercache_workflow.png)
 
-WonderCache is there at request and bypasses all framework. As a proxy. 
+**WonderCache** is there at request and bypasses all framework. As a proxy. 
 **But WonderCache knows when invalidate its cache.**
 
 ## Requirements
@@ -95,7 +95,7 @@ The ```wondercache:clear``` command delete all cached items and ```wondercache:l
 ```
 
 ## Usage
-Into a controller you can run() WonderCache and specified optionnaly entities which are linked to the controller response.
+Into a controller you can run() **WonderCache** and specified optionnaly entities which are linked to the controller response.
 The following exemple means that the controller's response depends on (or is linked to):
 - 3 packs with ids 1, 65 and 988
 - 2 exports with ids 65 and 22
@@ -116,14 +116,14 @@ Exemple's code for a controller:
 **No more than that**
 
 ## Profiler's informations
-With symfony toolbar you can follow how WonderCache performs. 
+With symfony toolbar you can follow how **WonderCache** performs. 
 If there's some error or warning:
 ![screenshot](https://raw.github.com/lioshi/WonderCacheBundle/master/Resources/images/wondercache_toolbar_errors.png)
 
 If all is good...
 ![screenshot](https://raw.github.com/lioshi/WonderCacheBundle/master/Resources/images/wondercache_toolbar_infos.png)
 
-... you can see more informations about how WonderCache saves your time:
+... you can see more informations about how **WonderCache saves** your time:
 ![screenshot](https://raw.github.com/lioshi/WonderCacheBundle/master/Resources/images/wondercache_profiler_infos.png)
 
 ## Credits
