@@ -1,6 +1,6 @@
 ![screenshot](https://raw.github.com/lioshi/WonderCacheBundle/master/Resources/images/icon_.png) WonderCacheBundle 
 =================
-This [Symfony 2](http://symfony.com) bundle provides a full response cache with automatic invalidation via Doctrine events:
+This [Symfony 2](http://symfony.com) bundle provides a full response cache with automatic invalidation via [doctrine](http://www.doctrine-project.org/) events:
 - just one service's call to manage cache of an action
 - no wasted time setting up a cache invalidation system
 
