@@ -1,6 +1,6 @@
 ![screenshot](https://raw.github.com/lioshi/WonderCacheBundle/master/Resources/images/icon_.png) WonderCacheBundle 
 =================
-A full response cache with automatic invalidation via Doctrine events:
+This [Symfony 2](http://symfony.com) bundle provides a full response cache with automatic invalidation via Doctrine events:
 - just one service's call to manage cache of an action
 - no wasted time setting up a cache invalidation system
 
@@ -17,7 +17,7 @@ But WonderCache knows when invalidate its cache.
 - php5-memcached 2.x
 
 ## Installation
-To install WonderCacheBundle with Composer just add the following to your _composer.json_ file:
+Use [Composer](http://getcomposer.org/) to install to install WonderCacheBundle with Composer just add the following to your _composer.json_ file:
 
     {
         require: {
