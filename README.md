@@ -1,12 +1,13 @@
-![screenshot](https://raw.github.com/lioshi/WonderCacheBundle/master/Resources/images/icon_.png) WonderCacheBundle 
+lioshi WonderCacheBundle 
 =================
+
 This [Symfony 2](http://symfony.com) bundle provides a full response cache with automatic invalidation via [doctrine](http://www.doctrine-project.org/) events:
 - just one service's call to manage cache of an action
 - no wasted time setting up a cache invalidation system
 
 [![knpbundles.com](http://knpbundles.com/lioshi/WonderCacheBundle/badge-short)](http://knpbundles.com/lioshi/WonderCacheBundle)
 
-## How works **WonderCache**
+## How works **WonderCache** ![screenshot](https://raw.github.com/lioshi/WonderCacheBundle/master/Resources/images/icon_.png)
 ![screenshot](https://raw.github.com/lioshi/WonderCacheBundle/master/Resources/images/wondercache_workflow.png)
 
 **WonderCache** is there at request and bypasses all framework. As a proxy. 
