@@ -58,15 +58,23 @@ class CacheInvalidator
 
             if (isset($LinkedModelsToCachedKeys[$classToDelete])){
                 foreach ($LinkedModelsToCachedKeys[$classToDelete] as $key => $entitiesIds) {
-                    
-                    if (count(array_intersect($entitiesIds, $idsFlush))){
+                    // delete cache ley if idsFlush are in entities linked to cache key OR if all entities are linked to the cache (ie: $entitiesIds is an empty array)
+                    if (count(array_intersect($entitiesIds, $idsFlush)) || !count($entitiesIds)){
                         $memcached->delete($key);
-                        $warning[] = 'Cache key deleted : '.$key. ' cause one or more '.$classToDelete.'\'s id was linked ('.implode(',',array_intersect($entitiesIds, $idsFlush)).')';
+                        if (count($entitiesIds)){
+                            $nbIds = count(array_intersect($entitiesIds, $idsFlush));
+                            $idsDetails = '('.implode(',',array_intersect($entitiesIds, $idsFlush)).')';
+                        } else {
+                            $nbIds = 'ALL';
+                            $idsDetails = '';
+                        }
+                        $warning[] = 'Cache key deleted : '.$key. ' cause '.$nbIds.' '.$classToDelete.'\'s id was linked '.$idsDetails;
+
 
                         // deleted entry in memcached saved entities linked
                         unset($LinkedModelsToCachedKeys[$classToDelete][$key]);
                         $memcached->set($WonderCache->getLinkedEntitiesToCachedKeysFilename(), $LinkedModelsToCachedKeys, 0);
-                    }
+                    } 
                 }
             }
             $this->container->get('wonder.cache.logger')->addWarning($warning);
