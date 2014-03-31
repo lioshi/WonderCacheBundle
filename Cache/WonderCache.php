@@ -43,7 +43,7 @@ class WonderCache
         return 'wc_linked_entities';
     }
 
-    public function getDurationToCachedKeysFilename() {
+    public static function getDurationToCachedKeysFilename() {
         return 'wc_durations';
     }
 
