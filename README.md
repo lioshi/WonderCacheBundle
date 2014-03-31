@@ -101,18 +101,21 @@ The following exemple means that the controller's response depends on (or is lin
 - 3 packs with ids 1, 65 and 988
 - 2 exports with ids 65 and 22
 - all cars
+And it expires before 3600s (by default duration is 0:infinite)
 
 Exemple's code for a controller:
 
         $this->container->get('wonder.cache')
             ->run()
             ->addLinkedEntities(
-            array(
-                'Me\MyBundle\Entity\Pack' => array(1,65,988), 
-                'Me\MyBundle\Entity\Export' => array(65,22),
-                'Me\MyBundle\Entity\Cars' => array()
+                array(
+                    'Me\MyBundle\Entity\Pack' => array(1,65,988), 
+                    'Me\MyBundle\Entity\Export' => array(65,22),
+                    'Me\MyBundle\Entity\Cars' => array()
+                )
             )
-        );
+            ->addDuration(3600)
+        ;
 
 ## Profiler's informations
 > With symfony toolbar you can follow how **WonderCache** performs. 

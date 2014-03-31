@@ -43,7 +43,16 @@ class ListCommand extends ContainerAwareCommand
       foreach ($memcached->getAllKeys() as $key => $displayKey) {
           $i++;
           $state = ($displayKey['empty'])?'<error> empty </error>':'';
-          $output->writeln('<info>'.$i.'</info> <comment>'.$displayKey['name'].'</comment> '.$state);
+          if ($displayKey['duration']!==false){ // false if no duration, 0 if infinite and 
+            if ($displayKey['duration'] == 0){
+              $durationInfos = ' <info>(infinite)</info>';
+            } else { 
+              $durationInfos = ' <info>('.$displayKey['duration'].' seconds)</info>';
+            }
+          } else {
+            $durationInfos = '';
+          }
+          $output->writeln('<info>'.$i.'</info> <comment>'.$displayKey['name'].'</comment> '.$state.$durationInfos);
           $keys[$i] = $key;
       }
 

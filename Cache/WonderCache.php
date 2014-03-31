@@ -14,12 +14,14 @@ class WonderCache
 {
     private $container;
     private $linkedEntities;
+    private $duration;
 
     public function __construct(ContainerInterface $container)
     {
         $this->container = $container;
         $this->linkedEntities = array();
         $this->used = false;
+        $this->duration = 0;
     }
 
     /**
@@ -39,6 +41,10 @@ class WonderCache
      */
     public function getLinkedEntitiesToCachedKeysFilename() {
         return 'wc_linked_entities';
+    }
+
+    public function getDurationToCachedKeysFilename() {
+        return 'wc_durations';
     }
 
     /**
@@ -99,14 +105,14 @@ class WonderCache
             $response = $event->getResponse();
 
             if ($this->getUsed()){
-                $this->container->get('memcached.response')->set($cacheKeyName, $response, 0);
+                $this->container->get('memcached.response')->set($cacheKeyName, $response, $this->getDuration());
                 if ($this->getLinkedEntities()){
                     $this->addLinkedEntitiesToCachedKeys($cacheKeyName, $this->getLinkedEntities());
-
                     $this->container->get('wonder.cache.logger')->addInfo('Response saved into cache [cache key: '.$cacheKeyName.'].', $this->getLinkedEntities());
                 } else {
                     $this->container->get('wonder.cache.logger')->addWarning('Response saved into cache without entities linked [cache key: '.$cacheKeyName.'].');
                 }
+                $this->addDurationToCachedKeys($cacheKeyName, $this->getDuration());
             } else {
                 $this->container->get('wonder.cache.logger')->addError(
                     array(
@@ -132,6 +138,15 @@ class WonderCache
 
     public function getLinkedEntities(){
         return $this->linkedEntities;
+    }
+
+    public function addDuration($duration){
+        $this->duration = $duration;
+        return $this;
+    }
+
+    public function getDuration(){
+        return $this->duration;
     }
 
     public function run($boolean = true){
@@ -168,6 +183,23 @@ class WonderCache
             $this->container->get('memcached.response')->set($linkedEntitiesToCachedKeysFile, $entities,0); 
         }
     }
+
+    public function addDurationToCachedKeys($key, $duration=0){
+
+        
+            $durationsToCachedKeysFile = $this->getDurationToCachedKeysFilename();    
+
+            if ($this->container->get('memcached.response')->get($durationsToCachedKeysFile)){
+                $durations = $this->container->get('memcached.response')->get($durationsToCachedKeysFile);
+                $durations[$key] = $duration;
+            } else {
+                $durations = array();
+                $durations[$key] = $duration;
+            }
+            
+            $this->container->get('memcached.response')->set($durationsToCachedKeysFile, $durations,0); 
+    }
+
 
     /**
      * Get linked entities for a cache's key

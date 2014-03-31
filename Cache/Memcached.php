@@ -1,6 +1,8 @@
 <?php
 namespace Lioshi\WonderCacheBundle\Cache;
 
+use Lioshi\WonderCacheBundle\Cache;
+
 /**
  * Class used for extends Memcached
  * 
@@ -66,11 +68,18 @@ class Memcached extends \Memcached
      * @return array formatted to store cache's key associated to their name (with prefix if configurated) and a boolean empty
      */
     public function getAllKeys(){
+        $durations = $this->get(WonderCache::getDurationToCachedKeysFilename());
         $allKeys = array();
         foreach (parent::getAllKeys() as $key) {
+            if (isset($durations[$key])){
+                $duration = $durations[$key];
+            } else {
+                $duration = false;
+            }
             $allKeys[str_replace($this->prefix, '', $key)] = array(
-                    'empty' => !$this->get(str_replace($this->prefix, '', $key)),
-                    'name'  => $key
+                    'empty'     => !$this->get(str_replace($this->prefix, '', $key)),
+                    'name'      => $key,
+                    'duration'  => $duration
                 );
         }
 
