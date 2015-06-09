@@ -62,7 +62,7 @@ class WonderCache
             return; // deactivate the listenner action
         } 
 
-        $cacheKeyName = $this->getResponseCacheKeyName($event->getRequest()->getUri());
+        $cacheKeyName = $this->getResponseCacheKeyName($event->getRequest()->getUri()).serialize($event->getRequest()->headers->all());
                     
         if ($this->container->get('memcached.response')->get($cacheKeyName)){
             $response = $this->container->get('memcached.response')->get($cacheKeyName);
