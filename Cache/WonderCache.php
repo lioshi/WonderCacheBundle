@@ -66,7 +66,8 @@ class WonderCache
                     
         if ($this->container->get('memcached.response')->get($cacheKeyName)){
             $response = $this->container->get('memcached.response')->get($cacheKeyName);
-            $response->headers->add(array('wc-response' => true ));
+            $response->headers->add(array('wondercache-status' => true ));
+            $response->headers->add(array('wondercache-key' => $cacheKeyName ));
 
             $linkedEntities = $this->getLinkedEntitiesFromCachedKeys($cacheKeyName);
             $this->container->get('wonder.cache.logger')->addInfo('Response retrieved from cache [cache key: '.$cacheKeyName.']', $linkedEntities);
