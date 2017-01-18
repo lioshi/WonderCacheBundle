@@ -36,6 +36,12 @@ class LioshiWonderCacheExtension extends Extension
             $container->setParameter('wondercache.activated', false);
         }
 
+        if (isset($config['included_headers_keys'])) {
+            $container->setParameter('wondercache.included_headers_keys', $config['included_headers_keys']);
+        } else {
+            $container->setParameter('wondercache.included_headers_keys', array());
+        }
+
         // Add servers to the parameters for declaration of memcached client in services.yml
         $servers = array();
         foreach ($config['memcached_response']['hosts'] as $host) {
