@@ -69,6 +69,8 @@ The ```wondercache:clear``` command delete all cached items and ```wondercache:l
 ```yml
     lioshi_wonder_cache:
         activated: true
+        included_headers_keys:
+            - email                     # Specify list of header's keys to include in url. Add only header's keys if page content return depends of. Or put ALL for all header's key
         memcached_response:
             hosts: 
                 - { dsn: localhost, port: 11211, weight: 60 }
