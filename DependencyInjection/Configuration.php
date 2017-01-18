@@ -26,6 +26,10 @@ class Configuration implements ConfigurationInterface
                 ->scalarNode('activated')
                     ->info('Specify to enable WonderCache.')
                 ->end()
+                ->arrayNode('included_headers_keys')
+                    ->prototype('scalar')
+                    ->info('Specify list of header\'s keys to include in url. Add only header\'s keys if page content return depends of. Or put ALL for all header\'s key')
+                ->end()
             ->end()
             ->append($this->addMemcachedSection())
         ;

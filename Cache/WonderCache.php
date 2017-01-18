@@ -62,12 +62,13 @@ class WonderCache
             return; // deactivate the listenner action
         } 
 
-        $cacheKeyName = $this->getResponseCacheKeyName($event->getRequest()->getUri().serialize($event->getRequest()->headers->all()));
-                    
+        $cacheKeyName = $this->getResponseCacheKeyName($event->getRequest()->getUri().$this->getIncludedHeader($event));
+        // echo $cacheKeyName."\n";
+
         if ($this->container->get('memcached.response')->get($cacheKeyName)){
             $response = $this->container->get('memcached.response')->get($cacheKeyName);
-            $response->headers->add(array('wondercache-status' => true ));
-            $response->headers->add(array('wondercache-key' => $cacheKeyName ));
+            // $response->headers->add(array('wondercache-status' => true ));
+            $response->headers->add(array('WC-Key' => $cacheKeyName ));
 
             $linkedEntities = $this->getLinkedEntitiesFromCachedKeys($cacheKeyName);
             $this->container->get('wonder.cache.logger')->addInfo('Response retrieved from cache [cache key: '.$cacheKeyName.']', $linkedEntities);
@@ -97,7 +98,7 @@ class WonderCache
     {
         if (!$this->container->getParameter('wondercache.activated')) return $event->getResponse(); // deactivate the listenner action
 
-        $cacheKeyName = $this->getResponseCacheKeyName($event->getRequest()->getUri().serialize($event->getRequest()->headers->all()));
+        $cacheKeyName = $this->getResponseCacheKeyName($event->getRequest()->getUri().$this->getIncludedHeader($event));
             
         if ($this->container->get('memcached.response')->get($cacheKeyName)){
             return;
@@ -226,6 +227,29 @@ class WonderCache
         } 
             
         return $entities;
+    }
+
+    public function getIncludedHeader($event){
+
+        $headers = $event->getRequest()->headers->all();
+        
+        if ($this->container->hasParameter('wondercache.included_headers_keys')){
+            $headerKeysListToKeep = $this->container->getParameter('wondercache.included_headers_keys');
+            $headersWithOnlyIncludedKey = array();
+            foreach ($headerKeysListToKeep as $headerKey) {
+                $headerKey = trim($headerKey);
+                if($headerKey == 'ALL'){
+                    $headersWithOnlyIncludedKey = $headers;
+                    break;
+                }
+                if(array_key_exists($headerKey, $headers)){
+                    $headersWithOnlyIncludedKey[$headerKey]=$headers[$headerKey];
+                }
+            }
+            $headers = $headersWithOnlyIncludedKey;
+        } 
+
+        return serialize($headers);
     }
 
 }
