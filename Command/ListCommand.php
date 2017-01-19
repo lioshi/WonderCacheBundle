@@ -56,12 +56,34 @@ class ListCommand extends ContainerAwareCommand
           $keys[$i] = $key;
       }
 
+      // get stats
+      $output->writeln(' ');
+      $stats = $memcached->getStats();
+      foreach ($stats as $server => $clusters) {
+        foreach ($clusters as $cluster => $stats) {
+            $usage = round($stats['bytes'] / $stats['limit_maxbytes'] * 100, 3);
+            
+            if($usage>0) { $colorUsage = 'green';}
+            if($usage>25){ $colorUsage = 'cyan';}
+            if($usage>50){ $colorUsage = 'blue';}
+            if($usage>75){ $colorUsage = 'magenta';}
+            if($usage>95){ $colorUsage = 'red';}
+            $output->writeln(' <fg=black;bg=yellow> '.$cluster.' </><fg=black;bg='.$colorUsage.'> usage '.$usage.'% </>');
+
+            foreach ($stats as $stat => $value) {
+                $output->writeln('<comment> '.$stat.' </comment> <info> '.$value.' </info>');
+            }
+        }
+      }
+            
       if (!$i){
         $output->writeln('<info>No cache</info>');
       } else {
         // display cache content?
         print_r($this->getCacheContent($keys, $memcached, $output));
+        $output->writeln(' ');
       }
+
 
     } catch (ServiceNotFoundException $e) {
             $output->writeln("<error> Service memcached.response is not found</error>");
@@ -86,11 +108,16 @@ class ListCommand extends ContainerAwareCommand
         }
     );
 
-    if (!array_key_exists($key, $keys)) {
-      throw new \Exception('Identifier number '.$key.' not exists');
+    if($key){
+        if (!array_key_exists($key, $keys)) {
+            $output->writeln("<error> Identifier number $key not exists </error>");
+        } else {
+            $output->writeln(' ');
+            $output->writeln('<fg=white;bg=blue> '.$keys[$key].' content: </>');
+            return $memcached->get($keys[$key]);
+        }
     }
-
-    return $memcached->get($keys[$key]);
+    
   }
 
 }

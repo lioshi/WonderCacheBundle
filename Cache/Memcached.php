@@ -120,6 +120,38 @@ class Memcached extends \Memcached
 
 
 
+    public function getStats(){
+        $durations = $this->get(WonderCache::getDurationToCachedKeysFilename());
+        $allKeys = array();
+        
+        // get keys from all servers  
+        $allStats =  array();
+        foreach ($this->memServers as $server) {  
+              
+            if (!isset($server['dsn'])) {  
+                throw new \LogicException("Memcached dsn must be defined for server");  
+            }  
+              
+            if (!isset($server['port'])) {  
+                throw new \LogicException("Memcached port must be defined for server");  
+            }  
+              
+            if (!isset($server['weight'])) {  
+                $server['weight'] = 0;  
+            }  
+
+            $memcache_obj = new \Memcached;
+            $memcache_obj->addServer($server['dsn'], $server['port']);
+            $stats = $memcache_obj->getStats();
+            
+            $allStats[$server['dsn'].":".$server['port']] = $stats;
+        } 
+
+        return $allStats;
+    }
+
+    
+
     function getMemcacheKeys($host = '127.0.0.1', $port = 11211){
  
         $mem = @fsockopen($host, $port);
@@ -179,7 +211,7 @@ class Memcached extends \Memcached
         unset($slab);
  
         return $keys;
-}
+    }
 
 
 
