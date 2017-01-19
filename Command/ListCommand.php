@@ -79,6 +79,7 @@ class ListCommand extends ContainerAwareCommand
                 $output->writeln('<comment> '.$stat.' </comment> <info> '.$value.' </info>');
             }
         }
+        $output->writeln(' ');
       }
             
       if (!$i){
