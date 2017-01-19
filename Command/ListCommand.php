@@ -44,10 +44,15 @@ class ListCommand extends ContainerAwareCommand
           $i++;
           $state = ($displayKey['empty'])?'<error> empty </error>':'';
           if ($displayKey['duration']!==false){ // false if no duration, 0 if infinite and 
-            if ($displayKey['duration'] == 0){
-              $durationInfos = ' <info>(infinite)</info>';
+            
+            $durationDatas = explode("|", $displayKey['duration']);
+            $displayKeyDuration = $durationDatas[0];
+            $displayKeyCreatedAt = date("Y-m-d H:i:s", $durationDatas[1]);
+
+            if ($displayKeyDuration == 0){
+              $durationInfos = ' <info>[lifetime infinite] created at '.$displayKeyCreatedAt.'</info>';
             } else { 
-              $durationInfos = ' <info>('.$displayKey['duration'].' seconds)</info>';
+              $durationInfos = ' <info>[lifetime '.$displayKeyDuration.' seconds] created at '.$displayKeyCreatedAt.'</info>';
             }
           } else {
             $durationInfos = '';
