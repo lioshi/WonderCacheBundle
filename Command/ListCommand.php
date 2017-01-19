@@ -68,7 +68,7 @@ class ListCommand extends ContainerAwareCommand
         foreach ($clusters as $cluster => $stats) {
             $usage = round($stats['bytes'] / $stats['limit_maxbytes'] * 100, 3);
             
-            if($usage>0) { $colorUsage = 'green';}
+            if($usage>=0) { $colorUsage = 'green';}
             if($usage>25){ $colorUsage = 'cyan';}
             if($usage>50){ $colorUsage = 'blue';}
             if($usage>75){ $colorUsage = 'magenta';}
