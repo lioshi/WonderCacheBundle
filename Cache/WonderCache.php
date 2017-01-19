@@ -188,6 +188,8 @@ class WonderCache
 
     public function addDurationToCachedKeys($key, $duration=0){
 
+            // add created timestamp after | 
+            $duration = strval($duration)."|".microtime(true);
         
             $durationsToCachedKeysFile = $this->getDurationToCachedKeysFilename();    
 
