@@ -10,7 +10,7 @@ use \Exception;
  * When an entity is updated, inserted or deleted the onFlush function get the response's caches linked and delete.
  * 
  */
-class CacheInvalidator 
+class CacheInvalidator
 {
     public function __construct($container)
     {
@@ -29,13 +29,13 @@ class CacheInvalidator
         );
 
         $classesToDelete = array();
-        
+
         foreach ($scheduledEntityChanges as $change => $entities) {
             $idsFlush = array();
             foreach($entities as $entity) {
                 if (method_exists($entity, 'getId')){
                     $idsFlush[] = $entity->getId();
-                } 
+                }
                 if (array_key_exists(get_class($entity), $classesToDelete)){
                     $a = $classesToDelete[get_class($entity)];
                 } else {
@@ -45,8 +45,14 @@ class CacheInvalidator
             }
         }
 
+        // add log to see invalidations
+        $infos = date("Y-m-d H:i:s")."\n";
+        foreach ($classesToDelete as $class => $value) {
+            $infos .= $class." : ".implode(", ", $value)."\n";
+        }
+
         $WonderCache = new WonderCache($this->container);
-        $memcached = $this->container->get('memcached.response'); 
+        $memcached = $this->container->get('memcached.response');
 
         $LinkedModelsToCachedKeys = $memcached->get($WonderCache->getLinkedEntitiesToCachedKeysFilename());
 
@@ -55,8 +61,7 @@ class CacheInvalidator
             $warning[] = 'Cache invalidation processed';
             $warning[] = 'Doctrine just updated/deleted or inserted entity : '.$classToDelete;
             $warning[] = $classToDelete.'\'s ids concerned : '.implode(', ',$idsFlush);
-
-            if (isset($LinkedModelsToCachedKeys[$classToDelete])){
+           if (isset($LinkedModelsToCachedKeys[$classToDelete])){
                 foreach ($LinkedModelsToCachedKeys[$classToDelete] as $key => $entitiesIds) {
                     // delete cache ley if idsFlush are in entities linked to cache key OR if all entities are linked to the cache (ie: $entitiesIds is an empty array)
                     if (count(array_intersect($entitiesIds, $idsFlush)) || !count($entitiesIds)){
@@ -74,12 +79,28 @@ class CacheInvalidator
                         // deleted entry in memcached saved entities linked
                         unset($LinkedModelsToCachedKeys[$classToDelete][$key]);
                         $memcached->set($WonderCache->getLinkedEntitiesToCachedKeysFilename(), $LinkedModelsToCachedKeys, 0);
-                    } 
+                    }
                 }
             }
             $this->container->get('wonder.cache.logger')->addWarning($warning);
 
+            // add log to see invalidations
+            $infos .= implode("\n", $warning);
+            $infos .= "\n";
         }
+
+        $infos .= "\n";
+
+        if(is_file('/tmp/testaInvalidationCache.log')){
+                // log roulant
+                if(filesize('/tmp/testaInvalidationCache.log') < 1000000){
+                    $infos = file_get_contents('/tmp/testaInvalidationCache.log').$infos;
+                }
+
+                file_put_contents('/tmp/testaInvalidationCache.log', $infos);
+        }
+
         return;
     }
 }
+                                         
