@@ -57,9 +57,11 @@ class ListCommand extends ContainerAwareCommand
           } else {
             $durationInfos = '';
           }
-          $output->writeln('<info>'.$i.'</info> <comment>'.$displayKey['name'].'</comment> '.$state.$durationInfos);
+          $output->writeln('<comment>'.$displayKey['name'].'</comment> '.$state.$durationInfos);
           $keys[$i] = $key;
       }
+      $output->writeln('<fg=black;bg=green> '.$i.' cache\'s entries </>');
+
 
       // get stats
       $output->writeln(' ');
@@ -76,6 +78,7 @@ class ListCommand extends ContainerAwareCommand
             $output->writeln(' <fg=black;bg=yellow> '.$cluster.' </><fg=black;bg='.$colorUsage.'> usage '.$usage.'% </>');
 
             foreach ($stats as $stat => $value) {
+                // $output->writeln('<comment> '.$stat.' </comment> <info> '.$value.' </info>');
                 $output->writeln('<comment> '.$stat.' </comment> <info> '.$value.' </info>');
             }
         }
@@ -107,7 +110,7 @@ class ListCommand extends ContainerAwareCommand
   {
     $key = $this->getHelper('dialog')->askAndValidate(
       $output,
-      '<info> Display which cache key content? (write identifier number) </info>',
+      '<info> Key name cache content to display? </info>',
       function($key)
         {
           return $key;
@@ -115,15 +118,13 @@ class ListCommand extends ContainerAwareCommand
     );
 
     if($key){
-        if (!array_key_exists($key, $keys)) {
+        if (!in_array($key, $keys)) {
             $output->writeln("<error> Identifier number $key not exists </error>");
         } else {
             $output->writeln(' ');
-            $output->writeln('<fg=white;bg=blue> '.$keys[$key].' content: </>');
-            return $memcached->get($keys[$key]);
+            $output->writeln('<fg=white;bg=blue> '.$key.' content: </>');
+            return $memcached->get($key);
         }
     }
-    
   }
-
 }
