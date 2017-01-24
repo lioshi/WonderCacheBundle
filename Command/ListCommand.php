@@ -9,6 +9,8 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\DependencyInjection\Exception\ServiceNotFoundException;
 
+use Lioshi\WonderCacheBundle\Cache\WonderCache;
+
 /**
  * Provides a command-line interface to list memcache contents
  * 
@@ -40,6 +42,9 @@ class ListCommand extends ContainerAwareCommand
       $i=0;
       $keys = array();
 
+      $WonderCache = new WonderCache($this->getContainer());
+      $LinkedModelsToCachedKeys = $memcached->get($WonderCache->getLinkedEntitiesToCachedKeysFilename());
+
       foreach ($memcached->getAllKeys() as $key => $displayKey) {
           $i++;
           $state = ($displayKey['empty'])?'<error> empty </error>':'';
@@ -59,6 +64,21 @@ class ListCommand extends ContainerAwareCommand
           }
           $output->writeln('<comment>'.$displayKey['name'].'</comment> '.$state.$durationInfos);
           $keys[$i] = $key;
+
+          // get entities linked
+          foreach ($LinkedModelsToCachedKeys as $class => $cacheKeys) {
+            foreach ($cacheKeys as $cacheKey => $entitiesIds) {
+              if($cacheKey == $key){
+                if(count($entitiesIds)){  
+                  $listIds = implode(',', $entitiesIds);
+                } else {
+                  $listIds = 'ALL';
+                }
+                $output->writeln('  <info>'.$class.'</info> '.$listIds);
+              }
+            }
+          }
+
       }
       $output->writeln('<fg=black;bg=green> '.$i.' cache\'s entries </>');
 
