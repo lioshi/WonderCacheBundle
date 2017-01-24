@@ -107,6 +107,7 @@ file_put_contents('/tmp/gggg', "ok\n", FILE_APPEND);
                 
                 $cacheContent['duration'] = $this->getDuration();
                 $cacheContent['content'] = $response;
+                $cacheContent['createdAt'] = microtime(true);
 
                 $this->container->get('memcached.response')->set($cacheKeyName, $cacheContent, $this->getDuration());
 

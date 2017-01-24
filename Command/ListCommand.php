@@ -41,21 +41,27 @@ class ListCommand extends ContainerAwareCommand
             foreach ($memcached->getAllKeys() as $key => $displayKey) {
                 $i++;
                 $state = ($displayKey['empty']) ? '<error> empty </error>' : '';
-                
-                $output->writeln('<comment>' . $displayKey['name'] . '</comment> ' . $state );
-                $keys[$i] = $key;
-                
+
                 $contentCachedKey = $memcached->get($key);
 
+                $dateInfos = "";
+                if(isset($contentCachedKey['createdAt'])){
+                    $displayKeyCreatedAt = date("Y-m-d H:i:s", $contentCachedKey['createdAt']);
+                    $dateInfos = '<fg=cyan> created at '.$displayKeyCreatedAt.'</>';
+                }
+                
+                $output->writeln('<comment>' . $displayKey['name'] . '</comment> ' . $state . $dateInfos);
+                $keys[$i] = $key;
+                
                 if (count($contentCachedKey['linkedEntities'])) {
                     // get entities linked
-                    foreach ($contentCachedKey['linkedEntities'] as $entitie => $entitiesIds) {
-                        if (count($entitiesIds)) {
-                            $listIds = implode(',', $entitiesIds);
+                    foreach ($contentCachedKey['linkedEntities'] as $entity => $entityIds) {
+                        if (count($entityIds)) {
+                            $listIds = implode(',', $entityIds);
                         } else {
                             $listIds = 'ALL';
                         }
-                        $output->writeln('  <info>' . $entitie . '</info> ' . $listIds);
+                        $output->writeln('  <info>' . $entity . '</info> ' . $listIds);
                     }
                 }
             }
