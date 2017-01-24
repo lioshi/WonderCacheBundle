@@ -74,7 +74,6 @@ class Memcached extends \Memcached
      * @return array formatted to store cache's key associated to their name (with prefix if configurated) and a boolean empty
      */
     public function getAllKeys(){
-        $durations = $this->get(WonderCache::getDurationToCachedKeysFilename());
         $allKeys = array();
 
         // not worked...
@@ -103,15 +102,9 @@ class Memcached extends \Memcached
         } 
 
         foreach ($allKeysFromMemached as $key) {
-            if (isset($durations[$key])){
-                $duration = $durations[$key];
-            } else {
-                $duration = false;
-            }
             $allKeys[str_replace($this->prefix, '', $key)] = array(
                     'empty'     => !$this->get(str_replace($this->prefix, '', $key)),
-                    'name'      => $key,
-                    'duration'  => $duration
+                    'name'      => $key
                 );
         }
 
@@ -121,7 +114,6 @@ class Memcached extends \Memcached
 
 
     public function getStats(){
-        $durations = $this->get(WonderCache::getDurationToCachedKeysFilename());
         $allKeys = array();
         
         // get keys from all servers  
