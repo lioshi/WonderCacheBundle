@@ -133,12 +133,24 @@ class ListCommand extends ContainerAwareCommand
                 $output->writeln("<error> Identifier number $key not exists </error>");
             } else {
                 $cacheContent = $memcached->get($key);
+                
+                $output->writeln(' ');
+                $output->writeln('<fg=white;bg=blue> request-uri: </>');
+                print_r($cacheContent['request-uri']);
+                
+                $output->writeln(' ');
+                $output->writeln('<fg=white;bg=blue> request-header: </>');
+                print_r($cacheContent['request-header']);
+                
+                
                 $output->writeln(' ');
                 $output->writeln('<fg=white;bg=blue> duration: </>');
                 print_r($cacheContent['duration']);
+
                 $output->writeln(' ');
                 $output->writeln('<fg=white;bg=blue> linkedEntities: </>');
                 print_r($cacheContent['linkedEntities']);
+
                 $output->writeln(' ');
                 $output->writeln('<fg=white;bg=blue> content: </>');
                 print_r($cacheContent['content']);

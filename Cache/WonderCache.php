@@ -49,7 +49,10 @@ class WonderCache
             return; // deactivate the listenner action
         } 
 
-        $cacheKeyName = $this->getResponseCacheKeyName($event->getRequest()->getUri().$this->getIncludedHeader($event));
+        $includedHeaders = $this->getIncludedHeader($event);
+        $serializedHeaders = serialize($includedHeaders);
+
+        $cacheKeyName = $this->getResponseCacheKeyName($event->getRequest()->getUri().$serializedHeaders);
         // echo $cacheKeyName."\n";
 
         if ($cacheContent = $this->container->get('memcached.response')->get($cacheKeyName)){
@@ -88,7 +91,10 @@ class WonderCache
     
         if (!$this->container->getParameter('wondercache.activated')) return $event->getResponse(); // deactivate the listenner action
 
-        $cacheKeyName = $this->getResponseCacheKeyName($event->getRequest()->getUri().$this->getIncludedHeader($event));
+        $includedHeaders = $this->getIncludedHeader($event);
+        $serializedHeaders = serialize($includedHeaders);
+
+        $cacheKeyName = $this->getResponseCacheKeyName($event->getRequest()->getUri().$serializedHeaders);
             
         if ($this->container->get('memcached.response')->get($cacheKeyName)){
             return;
@@ -109,6 +115,8 @@ class WonderCache
                 $cacheContent['duration'] = $this->getDuration();
                 $cacheContent['content'] = $response;
                 $cacheContent['createdAt'] = microtime(true);
+                $cacheContent['request-uri'] = $event->getRequest()->getUri();
+                $cacheContent['request-header'] = $includedHeaders;
 
                 $this->container->get('memcached.response')->set($cacheKeyName, $cacheContent, $this->getDuration());
 
@@ -182,7 +190,7 @@ class WonderCache
             $headers = $headersWithOnlyIncludedKey;
         } 
 
-        return serialize($headers);
+        return $headers;
     }
 
 }
