@@ -56,7 +56,8 @@ class WonderCache
             
             $response = $cacheContent['content'];
 
-            $response->headers->add(array('WC-Key' => $cacheKeyName ));
+            $response->headers->add(array('WC-Key-name' => $cacheKeyName ));
+            $response->headers->add(array('WC-Key-createdAt' => date("Y-m-d H:i:s", $cacheContent['createdAt']) ));
 
             $this->container->get('wonder.cache.logger')->addInfo('Response retrieved from cache [cache key: '.$cacheKeyName.']', $cacheContent['linkedEntities']);
 
@@ -84,7 +85,7 @@ class WonderCache
      */
     public function onKernelResponse(FilterResponseEvent $event)
     {
-file_put_contents('/tmp/gggg', "ok\n", FILE_APPEND);        
+    
         if (!$this->container->getParameter('wondercache.activated')) return $event->getResponse(); // deactivate the listenner action
 
         $cacheKeyName = $this->getResponseCacheKeyName($event->getRequest()->getUri().$this->getIncludedHeader($event));

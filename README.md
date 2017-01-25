@@ -119,13 +119,20 @@ Exemple's code for a controller:
             ->addDuration(3600)
         ;
 
+## Cache invalidation system
+To see cache invalidation logs, just create file /tmp/wcInvalidationCache.log in your server.
+
+    touch /tmp/wcInvalidationCache.log
+
+It's a roll log, its weight never up to 1M bytes.
+
 ## Profiler's informations
 > With symfony toolbar you can follow how **WonderCache** performs. 
 > If there's some error or warning:
 
 ![screenshot](https://raw.github.com/lioshi/WonderCacheBundle/master/Resources/images/wondercache_toolbar_errors.png)
 
->If all is good...
+> If all is good...
 
 ![screenshot](https://raw.github.com/lioshi/WonderCacheBundle/master/Resources/images/wondercache_toolbar_infos.png)
 
