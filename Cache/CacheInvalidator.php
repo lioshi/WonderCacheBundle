@@ -50,8 +50,8 @@ class CacheInvalidator
         // add log to see invalidations
         $infos = date("Y-m-d H:i:s")."\n";
         foreach ($classesToDelete as $class => $value) {
-            $infos = '';
-            $infos .= "Cache invalidation processed\n";
+            $infos = "\n";
+            $infos .= date("Y-m-d H:i:s", $dateFlush).": cache invalidation processed\n";
             $infos .= "Doctrine just updated/deleted or inserted entity : ".$class."\n";
             $infos .= $class.'\'s ids concerned : '.implode(', ',$value)."\n";
         }
@@ -79,7 +79,7 @@ class CacheInvalidator
                             $nbIds = 'ALL';
                             $idsDetails = '';
                         }
-                        $infos .= 'Cache key deleted at '.date("Y-m-d H:i:s").' : '.$key. ' cause '.$nbIds.' '.$entity.'\'s id was linked '.$idsDetails.' ['.date("Y-m-d H:i:s", $contentCachedKey['createdAt']).' < '.date("Y-m-d H:i:s", $dateFlush).']';
+                        $infos .= 'Cache key deleted at '.date("Y-m-d H:i:s").': '.$key. ' cause '.$nbIds.' '.$entity.'\'s id was linked '.$idsDetails.' [entry created at '.date("Y-m-d H:i:s", $contentCachedKey['createdAt']).' before flush event]';
                         $infos .= "\n";
                     }
                 }
@@ -95,7 +95,7 @@ class CacheInvalidator
         if(is_file('/tmp/testaInvalidationCache.log')){
                 // log roulant
                 if(filesize('/tmp/testaInvalidationCache.log') < 1000000){
-                    $infos = file_get_contents('/tmp/testaInvalidationCache.log').$infos;
+                    file_put_contents('/tmp/testaInvalidationCache.log', $infos, FILE_APPEND);
                 }
 
                 file_put_contents('/tmp/testaInvalidationCache.log', $infos);
