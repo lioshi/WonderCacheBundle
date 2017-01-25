@@ -93,12 +93,12 @@ class CacheInvalidator
         $infos .= "\n";
 
         if(is_file('/tmp/wcInvalidationCache.log')){
-                // log roulant
+                // log rolled
                 if(filesize('/tmp/wcInvalidationCache.log') < 1000000){
                     file_put_contents('/tmp/wcInvalidationCache.log', $infos, FILE_APPEND);
+                } else {
+                    file_put_contents('/tmp/wcInvalidationCache.log', $infos);
                 }
-
-                file_put_contents('/tmp/wcInvalidationCache.log', $infos);
         }
 
         return;
