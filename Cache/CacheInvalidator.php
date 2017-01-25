@@ -19,6 +19,8 @@ class CacheInvalidator
 
     public function onFlush(OnFlushEventArgs $eventArgs)
     {
+        $dateFlush = microtime(true);
+        
         $em = $eventArgs->getEntityManager();
         $uow = $em->getUnitOfWork();
 
@@ -59,15 +61,17 @@ class CacheInvalidator
         $nbCacheKeyConcerned = 0;
 
         foreach ($memcached->getAllKeys() as $key => $displayKey) {
-            
+
             $contentCachedKey = $memcached->get($key);
 
             foreach($contentCachedKey['linkedEntities'] as $entity => $entityIds){
 
                 if(array_key_exists($entity, $classesToDelete)){
-                    if (count(array_intersect($entityIds,  $classesToDelete[$entity])) || !count($entityIds)){
+                    if ((count(array_intersect($entityIds,  $classesToDelete[$entity])) || !count($entityIds)) // if an id match, or all ids
+                        && $contentCachedKey['createdAt'] < $dateFlush // if date flush posterior of createdDate of entry
+                        ){ 
                         $nbCacheKeyConcerned++;
-                        $memcached->delete($key);
+                        $memcached->delete($key); 
                         if (count($entityIds)){
                             $nbIds = count(array_intersect($entityIds, $classesToDelete[$entity]));
                             $idsDetails = '('.implode(',',array_intersect($entityIds, $classesToDelete[$entity])).')';
@@ -75,8 +79,7 @@ class CacheInvalidator
                             $nbIds = 'ALL';
                             $idsDetails = '';
                         }
-                        $infos .= 'Cache key deleted : '.$key. ' cause '.$nbIds.' '.$entity.'\'s id was linked '.$idsDetails;
-
+                        $infos .= 'Cache key deleted at '.date("Y-m-d H:i:s").' : '.$key. ' cause '.$nbIds.' '.$entity.'\'s id was linked '.$idsDetails.' ['.date("Y-m-d H:i:s", $contentCachedKey['createdAt']).' < '.date("Y-m-d H:i:s", $dateFlush).']';
                         $infos .= "\n";
                     }
                 }
