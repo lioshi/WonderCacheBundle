@@ -50,7 +50,7 @@ class ListCommand extends ContainerAwareCommand
                     $dateInfos = '<fg=cyan> created at '.$displayKeyCreatedAt.'</>';
                 }
                 
-                $output->writeln('<comment>' . $displayKey['name'] . '</comment> ' . $state . $dateInfos);
+                $output->writeln('<comment>' . $displayKey['name'] . '</comment>' . $state . $dateInfos);
                 $keys[$i] = $key;
                 
                 if (count($contentCachedKey['linkedEntities'])) {
@@ -61,7 +61,7 @@ class ListCommand extends ContainerAwareCommand
                         } else {
                             $listIds = 'ALL';
                         }
-                        $output->writeln('  <info>' . $entity . '</info> ' . $listIds);
+                        $output->writeln('<fg=red> linked to </><info>' . $entity . '</info> ' . $listIds);
                     }
                 }
             }
@@ -123,7 +123,7 @@ class ListCommand extends ContainerAwareCommand
      */
     protected function getCacheContent($keys, $memcached, $output)
     {
-        $key = $this->getHelper('dialog')->askAndValidate($output, '<info> Key name cache content to display? </info>', function($key)
+        $key = $this->getHelper('dialog')->askAndValidate($output, '<info> Key name cache content to display? (ex: <info><comment>wc_response_cache_9d0eed46fe2fc39ac15efc9b529917a4</comment><info>)</info>'."\n > ", function($key)
         {
             return $key;
         });
