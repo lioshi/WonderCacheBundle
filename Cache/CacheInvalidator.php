@@ -59,6 +59,7 @@ class CacheInvalidator
         $memcached = $this->container->get('memcached.response');
 
         $nbCacheKeyConcerned = 0;
+        $nbSecondsAfterFlushEvent = 10;
 
         foreach ($memcached->getAllKeys() as $key => $displayKey) {
 
@@ -66,9 +67,11 @@ class CacheInvalidator
 
             foreach($contentCachedKey['linkedEntities'] as $entity => $entityIds){
 
+// $infos .= $key." -> ".$entity."\n";
+
                 if(array_key_exists($entity, $classesToDelete)){
                     if ((count(array_intersect($entityIds,  $classesToDelete[$entity])) || !count($entityIds)) // if an id match, or all ids
-                        && $contentCachedKey['createdAt'] < $dateFlush // if date flush posterior of createdDate of entry
+                        && $contentCachedKey['createdAt'] < ($dateFlush + $nbSecondsAfterFlushEvent) // if date flush posterior of createdDate of entry
                         ){ 
                         $nbCacheKeyConcerned++;
                         $memcached->delete($key); 
@@ -79,7 +82,7 @@ class CacheInvalidator
                             $nbIds = 'ALL';
                             $idsDetails = '';
                         }
-                        $infos .= 'Cache key deleted at '.date("Y-m-d H:i:s").': '.$key. ' cause '.$nbIds.' '.$entity.'\'s id was linked '.$idsDetails.' [entry created at '.date("Y-m-d H:i:s", $contentCachedKey['createdAt']).' before flush event]';
+                        $infos .= 'Cache key deleted at '.date("Y-m-d H:i:s", $dateFlush).': '.$key. ' cause '.$nbIds.' '.$entity.'\'s id was linked '.$idsDetails.' [entry created at '.date("Y-m-d H:i:s", $contentCachedKey['createdAt']).' before flush event + '.$nbSecondsAfterFlushEvent.' sec]';
                         $infos .= "\n";
                     }
                 }
@@ -94,7 +97,7 @@ class CacheInvalidator
 
         if(is_file('/tmp/wcInvalidationCache.log')){
                 // log rolled < 1M
-                if(filesize('/tmp/wcInvalidationCache.log') < 1000000){
+                if(filesize('/tmp/wcInvalidationCache.log') < 100000000){
                     file_put_contents('/tmp/wcInvalidationCache.log', $infos, FILE_APPEND);
                 } else {
                     file_put_contents('/tmp/wcInvalidationCache.log', $infos);
