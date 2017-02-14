@@ -50,9 +50,11 @@ class ListCommand extends ContainerAwareCommand
                     $dateInfos = '<fg=cyan> created at '.$displayKeyCreatedAt.'</>';
                 }
                 
-                $output->writeln('<comment>' . $displayKey['name'] . '</comment>' . $state . $dateInfos);
+                $output->writeln($i.' <comment>' . $displayKey['name'] . '</comment>' . $state . $dateInfos);
                 $keys[$i] = $key;
                 
+                $output->writeln('<fg=cyan> request-uri </>' . $contentCachedKey['request-uri'] . '');
+
                 if (count($contentCachedKey['linkedEntities'])) {
                     // get entities linked
                     foreach ($contentCachedKey['linkedEntities'] as $entity => $entityIds) {
@@ -137,6 +139,11 @@ class ListCommand extends ContainerAwareCommand
                 $output->writeln(' ');
                 $output->writeln('<fg=white;bg=blue> request-uri: </>');
                 print_r($cacheContent['request-uri']);
+
+                $output->writeln(' ');
+                $output->writeln('<fg=white;bg=blue> createdAt: </>');
+                $displayKeyCreatedAt = date("Y-m-d H:i:s", $cacheContent['createdAt']);
+                print_r($displayKeyCreatedAt);
                 
                 $output->writeln(' ');
                 $output->writeln('<fg=white;bg=blue> request-header: </>');
