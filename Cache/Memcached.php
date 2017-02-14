@@ -98,7 +98,7 @@ class Memcached extends \Memcached
                 $server['weight'] = 0;  
             }  
 
-            $allKeysFromMemached = array_merge($allKeysFromMemached, self::getMemcacheKeys($server['dsn'], $server['port']));
+            $allKeysFromMemached = array_merge($allKeysFromMemached, self::getMCAllKeys($server['dsn'], $server['port']));
         } 
 
         foreach ($allKeysFromMemached as $key) {
@@ -111,7 +111,12 @@ class Memcached extends \Memcached
         return $allKeys;
     }
 
-
+    // new way to list all keys...
+    public function getMCAllKeys($dsn, $port){
+        $command = 'memdump --servers="'.$dsn.':'.$port.'" 2> /dev/null';
+        exec($command, $list);
+        return $list;  
+    }
 
     public function getStats(){
         $allKeys = array();
