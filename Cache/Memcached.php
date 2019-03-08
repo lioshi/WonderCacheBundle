@@ -118,7 +118,7 @@ class Memcached extends \Memcached
         return $list;  
     }
 
-    public function getStats(){
+    public function getStats($type = NULL){
         $allKeys = array();
         
         // get keys from all servers  
@@ -139,7 +139,7 @@ class Memcached extends \Memcached
 
             $memcache_obj = new \Memcached;
             $memcache_obj->addServer($server['dsn'], $server['port']);
-            $stats = $memcache_obj->getStats();
+            $stats = $memcache_obj->getStats(NULL);
             
             $allStats[$server['dsn'].":".$server['port']] = $stats;
         } 
