@@ -75,39 +75,14 @@ class Memcached extends \Memcached
      */
     public function getAllKeys(){
         $allKeys = array();
-
-        // not worked...
-        // $this->setOption(Memcached::OPT_BINARY_PROTOCOL, true);
-        // var_dump($this->getOption(Memcached::OPT_BINARY_PROTOCOL));
-        // var_dump(parent::getAllKeys());
-        // $allKeysFromMemached = parent::getAllKeys();
-        
-        // get keys from all servers  
-        $allKeysFromMemached =  array();
-        foreach ($this->memServers as $server) {  
-              
-            if (!isset($server['dsn'])) {  
-                throw new \LogicException("Memcached dsn must be defined for server");  
-            }  
-              
-            if (!isset($server['port'])) {  
-                throw new \LogicException("Memcached port must be defined for server");  
-            }  
-              
-            if (!isset($server['weight'])) {  
-                $server['weight'] = 0;  
-            }  
-
-            $allKeysFromMemached = array_merge($allKeysFromMemached, self::getMCAllKeys($server['dsn'], $server['port']));
-        } 
-
+        $allKeysFromMemached = parent::getAllKeys();
+     
         foreach ($allKeysFromMemached as $key) {
             $allKeys[str_replace($this->prefix, '', $key)] = array(
                     'empty'     => !$this->get(str_replace($this->prefix, '', $key)),
                     'name'      => $key
                 );
         }
-
         return $allKeys;
     }
 
